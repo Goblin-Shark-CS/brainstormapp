@@ -17,6 +17,9 @@ module.exports = {
         open: false, // stops the browser from opening every time server is started
         proxy: {
             '/api': 'http://localhost:3000',
+            '/start': 'http://localhost:3000',
+            '/join': 'http://localhost:3000',
+            '/view': 'http://localhost:3000',
             // need to list for every endpoint used
         },
     },

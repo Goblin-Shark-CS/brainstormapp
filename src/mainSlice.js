@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
     name: 'main',
     initialState: {
+        // username, board ID, etc
         session: {},
         entries: [
           {
@@ -46,11 +47,17 @@ export const mainSlice = createSlice({
             entry.userVote = false;
           }
         },
+        loadChat: (state, action) => {
+          // Completely replace state.
+          // NOTE: This is dangerous; it would be better to validate data from the backend.
+          console.log('Loading initial state.');
+          return action.payload
+        }
     },
 });
 
 // Export actions for use in components
-export const { addEntry, showPayload, increaseVote } = mainSlice.actions;
+export const { addEntry, showPayload, increaseVote, loadChat } = mainSlice.actions;
 
 // Export the reducer function for store configuration
 export default mainSlice.reducer;
