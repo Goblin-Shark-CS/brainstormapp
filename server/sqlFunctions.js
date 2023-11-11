@@ -114,7 +114,7 @@ sqlFunctions.getEntries = (roomId) => {
   pool
     .query(
       `
-    SELECT * FROM entries WHERE roomId
+    SELECT * FROM entries WHERE roomId = ${roomId}
     `
     )
     .then((data) =>
@@ -130,7 +130,7 @@ sqlFunctions.getComments = (entryId) => {
   pool
     .query(
       `
-    SELECT * FROM comments WHERE entryId
+    SELECT * FROM comments WHERE entryId= ${entryId}
     `
     )
     .then((data) => console.log('The data for the comments:', data))
@@ -144,7 +144,7 @@ sqlFunctions.getVoteCount = (entryId) => {
   pool
     .query(
       `
-    SELECT * FROM votes WHERE entryId
+    SELECT * FROM votes WHERE entryId=${entryId}
     `
     )
     .then((data) => console.log('The number of votes for the entry:', data))
@@ -152,6 +152,8 @@ sqlFunctions.getVoteCount = (entryId) => {
       console.log('Error getting the number of votes for the entry', err)
     );
 };
+
+//delete vote
 
 // Other queries:
 // read
