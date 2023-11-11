@@ -5,8 +5,7 @@ import Entry from './Entry.jsx';
 import Chatbox from "./Chatbox.jsx";
 import Box from '@mui/material/Box';
 
-// Entries Container
-function EntriesComponent(props) {
+export default function Entries(props) {
   const { entries } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
@@ -31,5 +30,3 @@ function EntriesComponent(props) {
     </Box>
   )
 }
-
-export default EntriesComponent;
