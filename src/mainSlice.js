@@ -2,7 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const mainSlice = createSlice({
     name: 'main',
-    initialState: 0, // use object for multiple states
+    initialState: {
+        projects: []
+    }, // use object for multiple states
     reducers: {
         reducer1: (state) => state + 1,
         reducer2: (state) => state - 1,
