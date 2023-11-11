@@ -15,7 +15,7 @@ export default function Chatbox() {
         webSocket.addEventListener("open", () => {
             console.log("We are connected");
         });
-    })
+    }, []);
 
     function sendMessage(e) {
         // Submit chat message to server
