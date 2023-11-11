@@ -6,7 +6,9 @@ import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import './style.css';
 
-// Roboto font for Moterial UI
+
+const webSocket = new WebSocket('ws://localhost:443/');
+// Roboto font for Material UI
 // import '@fontsource/roboto/300.css';
 // import '@fontsource/roboto/400.css';
 // import '@fontsource/roboto/500.css';
