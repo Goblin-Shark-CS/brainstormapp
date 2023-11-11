@@ -17,7 +17,6 @@ sessionController.createSession = (req, res, next) => {
   return next();
 };
 
-
 /**
  * verify whether or not the session is still valid.
  */
