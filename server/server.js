@@ -34,7 +34,7 @@ app.use(
   /* Create session cookie */
   (req, res) => {
     dbg('Request to join room: ', req.params.roomId);
-    res.status(200).redirect(`/view/${req.params.roomId}`)
+    res.redirect(`/view/${req.params.roomId}`)
   }
 )
 
