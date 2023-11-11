@@ -6,15 +6,17 @@ import Chatbox from "./components/Chatbox.jsx";
 
 function App() {
   return (
-    <div id="main">
+    <div id="app">
       <div id="nav">
         <NavComponent />
       </div>
-      <div id="entries">
-        <EntriesComponent />
-      </div>
-      <div id="details">
-        <DetailsComponent />
+      <div id="main">
+        <div id="entries">
+          <EntriesComponent />
+        </div>
+        <div id="details">
+          <DetailsComponent />
+        </div>
       </div>
       <Chatbox />
     </div>

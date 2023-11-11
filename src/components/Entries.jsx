@@ -1,11 +1,32 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { reducer1, reducer2, reducer3 } from "../mainSlice";
+import Entry from './Entry.jsx';
 
-function EntriesComponent() {
+
+// Entries Container
+function EntriesComponent(props) {
+  const { entries } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
-  return <></>;
+  let entriesArray = [];
+  // for each item in entries, render an Entry component
+  for (let i in entries) {
+    // Creates components for all entires in state
+    entriesArray.push(
+      <Entry 
+        voteCount = {entries[i].voteCount}
+        userVoteStatus = {entries[i].userVoteStatus}
+        messageContent = {entries[i].message}
+      />
+    )
+  }
+
+  return (
+    <div>
+      {entriesArray}
+    </div>
+  )
 }
 
 export default EntriesComponent;

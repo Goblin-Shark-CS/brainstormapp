@@ -1,3 +1,18 @@
 body {
   background-color: lightblue;
 }
+
+.entryItem {
+  display: flex;
+  flex-direction: row;
+
+  .voteStatus {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    button {
+      height: 20px;
+      padding: 0px;
+    }
+  }
+}

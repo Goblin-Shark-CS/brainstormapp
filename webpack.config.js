@@ -14,6 +14,7 @@ module.exports = {
         static: {
             directory: path.join(__dirname, 'public')
         },
+        open: false, // stops the browser from opening every time server is started
         proxy: {
             '/api': 'http://localhost:3000',
             '/start': 'http://localhost:3000',
@@ -38,7 +39,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'public', 'index.html')
+            template: path.join(__dirname, 'public', 'app.html')
         }),
     ]
 }
