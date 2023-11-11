@@ -50,7 +50,7 @@ export const mainSlice = createSlice({
 });
 
 // Export actions for use in components
-export const { reducer1, reducer2, reducer3, increaseVote } = mainSlice.actions;
+export const { addEntry, showPayload, increaseVote } = mainSlice.actions;
 
 // Export the reducer function for store configuration
 export default mainSlice.reducer;
