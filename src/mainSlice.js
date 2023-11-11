@@ -32,15 +32,25 @@ export const mainSlice = createSlice({
           state.entries.push(newEntry);
         },
         showPayload: (state, action) => console.log(action.payload),
-        increaseVote: (state) => { // TODO: Create function to increase vote count for specific entry
-          // TODO: Increase vote count
-          // TODO: Change user vote status
+      
+        // Create function to change vote count for specific entry
+        increaseVote: (state, action) => {
+          // Get entry clicked
+          const entry = state.entries.find(item => item.id === Number(action.payload))
+          // Increase vote count for that entry
+          if (!entry.userVote) {
+            entry.voteCount++
+            entry.userVote = true;
+          } else {
+            entry.voteCount--
+            entry.userVote = false;
+          }
         },
     },
 });
 
 // Export actions for use in components
-export const { reducer1, reducer2, reducer3 } = mainSlice.actions;
+export const { reducer1, reducer2, reducer3, increaseVote } = mainSlice.actions;
 
 // Export the reducer function for store configuration
 export default mainSlice.reducer;

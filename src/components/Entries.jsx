@@ -11,12 +11,15 @@ function EntriesComponent(props) {
 
   let entriesArray = [];
   // for each item in entries, render an Entry component
-  for (let i in entries) {
+  for (let i in entries) { // TODO: Refactor using map
     // Creates components for all entires in state
+    let key = i;
     entriesArray.push(
       <Entry 
+        key = {key}
+        entry = {key}
         voteCount = {entries[i].voteCount}
-        userVoteStatus = {entries[i].userVoteStatus}
+        userVote = {entries[i].userVote}
         messageContent = {entries[i].message}
       />
     )
