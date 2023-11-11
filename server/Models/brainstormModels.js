@@ -40,9 +40,8 @@ pool.query(
     room_id BIGINT,
     votes BIGINT DEFAULT 0,
     user_id BIGINT,
-    FOREIGN KEY(room_id) REFERENCES rooms (_id)
-    FOREIGN KEY(user_id) REFERENCES users (_id)
-    ))`,
+    FOREIGN KEY(room_id) REFERENCES rooms (_id),
+    FOREIGN KEY(user_id) REFERENCES users (_id))`,
   (err, result) => {
     if (err) {
       console.error('Error creating the entries table');
@@ -62,8 +61,8 @@ pool.query(
     user_id BIGINT,
     text VARCHAR(255),
     PRIMARY KEY(entry_id, user_id),
-    FOREIGN KEY(entry_id) REFERENCES entries (_id)
-    FOREIGN KEY(user_id) REFERENCES entries (_id))`,
+    FOREIGN KEY(entry_id) REFERENCES entries (_id),
+    FOREIGN KEY(user_id) REFERENCES users (_id))`,
     
     (err, result) => {
       if (err) {
@@ -82,8 +81,8 @@ pool.query(
     entry_id BIGINT,
     user_id BIGINT,
     PRIMARY KEY(entry_id, user_id),
-    FOREIGN KEY(entry_id) REFERENCES entries (_id)
-    FOREIGN KEY(user_id) REFERENCES entries (_id))`,
+    FOREIGN KEY(entry_id) REFERENCES entries (_id),
+    FOREIGN KEY(user_id) REFERENCES users (_id))`,
 
     (err, result) => {
       if (err) {
