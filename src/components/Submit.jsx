@@ -9,8 +9,8 @@ function SubmitComponent() {
   const dispatch = useDispatch();
 
   return (
-    <Box component="form" display={"flex"}>
-      <Box width={"100%"} padding={"0px 10px"}>
+    <Box component="form" display="flex">
+      <Box width="100%" padding="0px 10px">
         <TextField fullWidth id="outlined-basic" label="Enter submission" variant="outlined" />
         </Box>
       <Button variant="contained" sx={{ padding: "10px", margin: "5px 20px 5px 5px"}}>Post</Button>

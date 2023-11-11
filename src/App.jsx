@@ -11,7 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 function App() {
   return (
-    <Box display={"flex"} height={"100vh"} flexDirection={"column"}>
+    <Box display="flex" height="100vh" flexDirection="column">
         <AppBar position="static">
           <Toolbar variant="dense">
             <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
@@ -22,16 +22,16 @@ function App() {
             </Typography>
           </Toolbar>
       </AppBar>
-      <Box display={"flex"} height={"100%"}>
-        <Box display={"flex"} flexDirection={"column"} width={"60%"}>
-            <Box height={"100%"} overflow={"scroll"}>
+      <Box display="flex" height="100%">
+        <Box display="flex" flexDirection="column" width="60%">
+            <Box height="100%" overflow="scroll">
               <EntriesComponent />
             </Box>
-            <Box height={"75px"}>
+            <Box height="75px">
               <SubmitComponent />
             </Box>
         </Box>
-        <Box width={"40%"} backgroundColor={"#eee"}>
+        <Box width="40%" backgroundColor="#eee">
           <DetailsComponent />
         </Box>
       </Box>
