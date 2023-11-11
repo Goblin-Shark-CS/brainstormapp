@@ -9,8 +9,10 @@ export default function Chatbox() {
     useEffect( () => {
         webSocket.onmessage = (event) => {
             console.log(event)
-            // Update state: Add message from server to list of messages
-            setMessages(lastMessages => [...lastMessages, event.data])
+            // Update state: Add message from server to list of messages.
+            // Server format: {"response": String }
+            const parsedMsg = JSON.parse(event.data);
+            setMessages(lastMessages => [...lastMessages, parsedMsg.response])
         };
         webSocket.addEventListener("open", () => {
             console.log("We are connected");
@@ -28,7 +30,7 @@ export default function Chatbox() {
         let message = Object.fromEntries(formData);
 
         // Build custom message
-        message.userID = '12345';
+        message.type = 'message';
 
         webSocket.send(JSON.stringify(message));
         console.log('Sending: ', message);
