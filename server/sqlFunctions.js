@@ -10,10 +10,11 @@ sqlFunctions.addRoom = (id, roomname = null, password = null) => {
       `
     INSERT INTO rooms (_id, roomname, password)
     VALUES ($1, $2, $3)
+    RETURNING *;
   `,
       values
     )
-    .then()
+    .then((data) => console.log('Added to rooms table:', data))
     .catch((err) => console.log('Error adding a room to the database:', err));
 };
 
