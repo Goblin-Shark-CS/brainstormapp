@@ -47,7 +47,8 @@ export default function Details() {
               }}
               variant="standard"
             />
-            </Box>
+          </Box>
+          <br /><br />
           <CopyToClipboardButton />
         </Box>
         <br />

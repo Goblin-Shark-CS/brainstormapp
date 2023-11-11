@@ -23,7 +23,7 @@ export default function App() {
           </Toolbar>
       </AppBar>
       <Box display="flex" height="100%">
-        <Box display="flex" flexDirection="column" width="60%">
+        <Box display="flex" flexDirection="column" width="60%" backgroundColor="#f6f6f6">
             <Box height="100%" overflow="scroll">
               <Entries />
             </Box>
