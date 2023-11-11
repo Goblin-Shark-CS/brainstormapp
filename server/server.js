@@ -149,22 +149,24 @@ wsserver.on('connection', ws => {
       switch (parsedMsg.type) {
         case "join":
 
+          // NOTE: We could do the join session with an initial Express request.
+
           // Validate session
           // Read state from the database on initial join
           // Store properties on ws.session
-          // setInfo();
           dbg('Client joined.')
           ws.session.userId = parsedMsg.userId; /* TODO: Set this */
           response = JSON.stringify({type: 'init', state: initialState});
           ws.send(response);
           break;
         case "message":
+
           // Note: we need to filter clients by room
           // Push message to the database here
           // Do we read it back from the database? Caching issues...
           // For now: try without sync and see if it causes problems
           // Simultaneously broadcast to clients
-          const responseMsg = JSON.stringify({response: parsedMsg.message});
+          const responseMsg = JSON.stringify({type: 'message', response: parsedMsg.message});
           dbg(`distributing message: ${responseMsg}`)
           wsserver.clients.forEach(client => {
             client.send(responseMsg);

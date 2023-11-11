@@ -38,7 +38,8 @@ export const mainSlice = createSlice({
           // TODO: Change user vote status
         },
         loadChat: (state, action) => {
-          // Completely replace state
+          // Completely replace state.
+          // NOTE: This is dangerous; it would be better to validate data from the backend.
           console.log('Loading initial state.');
           return action.payload
         }

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadChat } from '../mainSlice';
 
 const webSocket = new WebSocket('ws://localhost:443/');
-// TODO: Convert to 2 spaces
 
 export default function Chatbox() {
   const [messages, setMessages] = useState([]);
