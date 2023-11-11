@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
     name: 'main',
     initialState: {
+        // username, board ID, etc
         session: {},
         entries: [
           {
@@ -32,15 +33,31 @@ export const mainSlice = createSlice({
           state.entries.push(newEntry);
         },
         showPayload: (state, action) => console.log(action.payload),
-        increaseVote: (state) => { // TODO: Create function to increase vote count for specific entry
-          // TODO: Increase vote count
-          // TODO: Change user vote status
+      
+        // Create function to change vote count for specific entry
+        increaseVote: (state, action) => {
+          // Get entry clicked
+          const entry = state.entries.find(item => item.id === Number(action.payload))
+          // Increase vote count for that entry
+          if (!entry.userVote) {
+            entry.voteCount++
+            entry.userVote = true;
+          } else {
+            entry.voteCount--
+            entry.userVote = false;
+          }
         },
+        loadChat: (state, action) => {
+          // Completely replace state.
+          // NOTE: This is dangerous; it would be better to validate data from the backend.
+          console.log('Loading initial state.');
+          return action.payload
+        }
     },
 });
 
 // Export actions for use in components
-export const { addEntry, showPayload, increaseVote } = mainSlice.actions;
+export const { addEntry, showPayload, increaseVote, loadChat } = mainSlice.actions;
 
 // Export the reducer function for store configuration
 export default mainSlice.reducer;
