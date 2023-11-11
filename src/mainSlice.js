@@ -3,7 +3,11 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
     name: 'main',
     initialState: {
-        projects: []
+        projects: [],
+        entries: [
+          'Messag 1: Lorem ipsum',
+          'Message 2: Lorem ipsum'
+        ]
     }, // use object for multiple states
     reducers: {
         reducer1: (state) => state + 1,
