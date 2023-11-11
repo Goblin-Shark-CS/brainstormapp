@@ -16,11 +16,11 @@ const createTables = async () => {
     }
   });
 
-  //create a room table
+  // create a room table
   await pool.query(
     `
   CREATE TABLE IF NOT EXISTS rooms (
-    _id BIGINT PRIMARY KEY,
+    _id VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255),
     roomname VARCHAR(255));`,
     (err, result) => {
@@ -36,9 +36,9 @@ const createTables = async () => {
   await pool.query(
     `
   CREATE TABLE IF NOT EXISTS entries (
-    _id SERIAL PRIMARY KEY,
+    _id SERIAL PRIMARY KEY ,
     text VARCHAR(255) NOT NULL,
-    room_id BIGINT,
+    room_id VARCHAR,
     votes BIGINT DEFAULT 0,
     user_id BIGINT,
     FOREIGN KEY(room_id) REFERENCES rooms (_id),
@@ -56,10 +56,10 @@ const createTables = async () => {
   await pool.query(
     `
   CREATE TABLE IF NOT EXISTS comments (
+    _id SERIAL PRIMARY KEY,
     entry_id BIGINT,
     user_id BIGINT,
     text VARCHAR(255),
-    PRIMARY KEY(entry_id, user_id),
     FOREIGN KEY(entry_id) REFERENCES entries (_id),
     FOREIGN KEY(user_id) REFERENCES users (_id));`,
 
@@ -95,7 +95,7 @@ const createTables = async () => {
   await pool.query(
     `
   CREATE TABLE IF NOT EXISTS users (
-    _id BIGINT PRIMARY KEY);`,
+    _id SERIAL PRIMARY KEY);`,
 
     (err, result) => {
       if (err) {
