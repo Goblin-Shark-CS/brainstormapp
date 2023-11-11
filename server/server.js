@@ -17,12 +17,47 @@ const PORT = CONFIG.PORT;
  * API Routes
  */
 
+
+app.use('/start',
+// Create room
+// Set cookie
+// Validate
+(req, res) => {
+  console.log('Creating room: ', res.locals.roomId);
+  res.sendStatus(200)
+})
+
+
+app.use(
+  '/join/:roomId',
+  /* Match room ID */
+  /* Create session cookie */
+  (req, res) => {
+    console.log('Request to join room: ', req.params.roomId);
+    res.redirect(`/view/${req.params.roomId}`)
+    res.sendStatus(200)
+  }
+)
+
+app.use(
+  '/view/:roomId',
+  /* Validate session cookie */
+  /* Send page */
+  (req, res) => {
+    console.log('Sending page: ', req.params.roomId);
+})
+
+
+
+/**
+ * Static Pages
+ */
 app.use('/bundle.js', (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, '../index_bundle.js'));
 });
 
 app.get('/', (req, res) => {
-  console.log('Getting main');
+  console.log('Request to main page.');
   return res.status(200).sendFile(path.join(__dirname, '../build/index.html'));
 });
 
