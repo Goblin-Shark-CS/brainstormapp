@@ -9,19 +9,19 @@ export const mainSlice = createSlice({
             id: 0, 
             message: 'The first brainstorm idea',
             voteCount: 0,
-            userVote: null
+            userVote: false
           },
           {
             id: 1,
             message: 'The second brainstorm idea',
             voteCount: 0,
-            userVote: null
+            userVote: false
           },
           {
             id: 1,
             message: 'The third brainstorm idea',
             voteCount: 0,
-            userVote: null
+            userVote: false
           }
         ]
     }, // use object for multiple states

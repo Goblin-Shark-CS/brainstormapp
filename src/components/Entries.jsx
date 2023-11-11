@@ -15,7 +15,7 @@ function EntriesComponent(props) {
     // Creates components for all entires in state
     entriesArray.push(
       <Entry 
-        votesCount = {entries[i].votesCount}
+        voteCount = {entries[i].voteCount}
         userVoteStatus = {entries[i].userVoteStatus}
         messageContent = {entries[i].message}
       />
