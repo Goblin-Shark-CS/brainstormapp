@@ -27,10 +27,7 @@ const errMsg = (message, err, status=500) => {
 /**
 /* Debug message
 */
-const dbg = (...args) => {
-  return PRODUCTION ? undefined : console.log(...args);
-};
+dbg = PRODUCTION ? () => {} : console.log;
 
-
-module.exports = {quietMsg, errMsg}
+module.exports = {quietMsg, errMsg, dbg}
 
