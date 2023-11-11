@@ -23,7 +23,7 @@ app.use('/start',
 // Set cookie
 // Validate
 (req, res) => {
-  console.log('Creating room: ', req.params);
+  console.log('Creating room: ', res.locals.roomId);
   res.sendStatus(200)
 })
 
