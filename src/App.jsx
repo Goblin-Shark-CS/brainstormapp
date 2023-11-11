@@ -12,7 +12,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 function App() {
   return (
     <Box display={"flex"} height={"100vh"} flexDirection={"column"}>
-        {/* <NavComponent /> */}
         <AppBar position="static">
           <Toolbar variant="dense">
             <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
