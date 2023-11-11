@@ -20,13 +20,13 @@ sqlFunctions.addRoom = (id, roomname = null, password = null) => {
 };
 
 //insert an entry(it is user's message) into the database
-sqlFunctions.addEntry = (id, messageText, roomId, votes, userId) => {
+sqlFunctions.addEntry = (id, messageText, roomId, userId) => {
   const text = `
-  INSERT INTO entries (_id, text, room_id, votes, user_id)
+  INSERT INTO entries (_id, text, room_id, user_id, votes)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *`;
 
-  const values = [id, messageText, roomId, votes, userId];
+  const values = [id, messageText, roomId, userId, 0];
   pool
     .query(text, values)
     .then((data) => console.log('Added to entries table:', data))
@@ -54,7 +54,7 @@ sqlFunctions.addComment = (entryId, userId, commentText) => {
 // console.log('FINISHED');
 
 //insert votes into the database
-sqlFunctions.addVotes = (entryId, userId) => {
+sqlFunctions.addVote = (entryId, userId) => {
   const text = `
   INSERT INTO votes (entry_id, user_id)
       VALUES ($1, $2)
@@ -88,20 +88,70 @@ sqlFunctions.addUser = (userId) => {
 // getRoom
 // take in an id paramter
 // it should return all the data for that room
-// if no id is passed in, return an array of ALL rooms 
-sqlFunctions.addRoom = (id, roomname = null, password = null) => {
-  pool.
-    query (
-      
+// if no id is passed in, return an array of ALL rooms
+sqlFunctions.getRoom = (id) => {
+  if (id === undefined) {
+    pool.query(
+      `
+      SELECT * FROM rooms
+      `
+    );
+  }
+  pool
+    .query(
+      `
+      SELECT * FROM rooms WHERE id=${id}
+      `
     )
+    .then((data) => console.log('The data for the room:', data))
+    .catch((err) => console.log('Error getting the data for the room:', err));
+};
 
-}
-
-// getEntries 
+// getEntries
 // take in a room_id parameter
 // return an array of all the entries for that room
+sqlFunctions.getEntries = (roomId) => {
+  pool
+    .query(
+      `
+    SELECT * FROM entries WHERE roomId
+    `
+    )
+    .then((data) =>
+      console.log('The data for the entry table of the room:', data)
+    )
+    .catch((err) => console.log('Error getting data for the entry table', err));
+};
 
+// getComments
+// take in an entry_id
+// return array of all comments for that entry
+sqlFunctions.getComments = (entryId) => {
+  pool
+    .query(
+      `
+    SELECT * FROM comments WHERE entryId
+    `
+    )
+    .then((data) => console.log('The data for the comments:', data))
+    .catch((err) => console.log('Error getting data for the comments', err));
+};
 
+// getVoteCount
+// take in an entry_id
+// return the number of votes for that entry
+sqlFunctions.getVoteCount = (entryId) => {
+  pool
+    .query(
+      `
+    SELECT * FROM votes WHERE entryId
+    `
+    )
+    .then((data) => console.log('The number of votes for the entry:', data))
+    .catch((err) =>
+      console.log('Error getting the number of votes for the entry', err)
+    );
+};
 
 // Other queries:
 // read
