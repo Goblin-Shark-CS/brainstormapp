@@ -2,6 +2,7 @@ import React from "react";
 import NavComponent from "./components/Nav.jsx";
 import EntriesComponent from "./components/Entries.jsx";
 import DetailsComponent from "./components/Details.jsx";
+import Chatbox from "./components/Chatbox.jsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <div id="details">
         <DetailsComponent />
       </div>
+      <Chatbox />
     </div>
   );
 }
