@@ -1,4 +1,5 @@
 //import pool
+const pool = require('./Models/brainstormModels');
 
 const sqlFunctions = {};
 
@@ -17,5 +18,8 @@ sqlFunctions.addRoom = (id, roomname = null, password = null) => {
     .then((data) => console.log('Added to rooms table:', data))
     .catch((err) => console.log('Error adding a room to the database:', err));
 };
+
+//sqlFunctions.addRoom(1, 'newroom', '123');
+console.log('FINISHED');
 
 module.exports = sqlFunctions;
