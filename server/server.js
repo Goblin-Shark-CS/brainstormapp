@@ -17,6 +17,15 @@ const PORT = CONFIG.PORT;
  * API Routes
  */
 
+app.use('/api/')
+
+
+
+
+/**
+ * Static Pages
+ */
+
 app.use('/bundle.js', (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, '../index_bundle.js'));
 });
