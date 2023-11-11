@@ -1,23 +1,30 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { reducer1, reducer2, reducer3 } from "../mainSlice";
+import Entry from './Entry.jsx';
 
-function EntriesComponent() {
+
+// Entries Container
+function EntriesComponent(props) {
   const { entries } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
-  // TODO: Create components for all entires in state
   let entriesArray = [];
+  // for each item in entries, render an Entry component
   for (let i in entries) {
-   // for each item in entries, render a  
+    // Creates components for all entires in state
+    entriesArray.push(
+      <Entry 
+        votesCount = {entries[i].votesCount}
+        userVoteStatus = {entries[i].userVoteStatus}
+        messageContent = {entries[i].message}
+      />
+    )
   }
-
-  
 
   return (
     <div>
-      {/*TODO: Add array to render all messages */}
-      <button onClick={()=> dispatch(reducer1())}>Generate Entries</button>
+      {entriesArray}
     </div>
   )
 }

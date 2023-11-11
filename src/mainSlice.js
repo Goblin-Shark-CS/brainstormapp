@@ -5,14 +5,34 @@ export const mainSlice = createSlice({
     initialState: {
         projects: [],
         entries: [
-          'Message 1: Lorem ipsum',
-          'Message 2: Lorem ipsum'
+          {
+            id: 0, 
+            message: 'The first brainstorm idea',
+            voteCount: 0,
+            userVote: null
+          },
+          {
+            id: 1,
+            message: 'The second brainstorm idea',
+            voteCount: 0,
+            userVote: null
+          },
+          {
+            id: 1,
+            message: 'The third brainstorm idea',
+            voteCount: 0,
+            userVote: null
+          }
         ]
     }, // use object for multiple states
     reducers: {
         reducer1: (state) => state + 1,
         reducer2: (state) => state - 1,
         reducer3: (state, action) => state + action.payload,
+        increaseVote: (state) => { // TODO: Create function to increase vote count for specific entry
+          // TODO: Increase vote count
+          // TODO: Change user vote status
+        },
     },
 });
 
