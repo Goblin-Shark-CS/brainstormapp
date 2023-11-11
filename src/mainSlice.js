@@ -5,7 +5,7 @@ export const mainSlice = createSlice({
     initialState: {
         projects: [],
         entries: [
-          'Messag 1: Lorem ipsum',
+          'Message 1: Lorem ipsum',
           'Message 2: Lorem ipsum'
         ]
     }, // use object for multiple states

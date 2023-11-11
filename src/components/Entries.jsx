@@ -6,14 +6,17 @@ function EntriesComponent() {
   const { entries } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
-  // function 
+  // TODO: Create components for all entires in state
   let entriesArray = [];
   for (let i in entries) {
-
+   // for each item in entries, render a  
   }
+
+  
 
   return (
     <div>
+      {/*TODO: Add array to render all messages */}
       <button onClick={()=> dispatch(reducer1())}>Generate Entries</button>
     </div>
   )
