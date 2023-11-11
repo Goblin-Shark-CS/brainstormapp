@@ -15,6 +15,7 @@ pool.connect((err, client, done) => {
   }
 });
 
+//create a room table
 pool.query(
   `
   CREATE TABLE IF NOT EXISTS rooms (
@@ -30,14 +31,18 @@ pool.query(
   }
 );
 
+//create an entries table
 pool.query(
   `
   CREATE TABLE IF NOT EXIST entries (
     _id SERIAL PRIMARY KEY,
     text VARCHAR(255) NOT NULL,
-    room_id BIGINT FOREIGN KEY,
-    votes BIGINT DEFAULT 0
-    user_id BIGINT FOREIGN KEY))`,
+    room_id BIGINT,
+    votes BIGINT DEFAULT 0,
+    user_id BIGINT,
+    FOREIGN KEY(room_id) REFERENCES rooms (_id)
+    FOREIGN KEY(user_id) REFERENCES users (_id)
+    ))`,
   (err, result) => {
     if (err) {
       console.error('Error creating the entries table');
@@ -46,6 +51,64 @@ pool.query(
     }
   }
 );
+
+
+
+//create comments table (have composite primary keys - entry id and user id)
+pool.query(
+  `
+  CREATE TABLE IF NOT EXIST comments (
+    entry_id BIGINT,
+    user_id BIGINT,
+    text VARCHAR(255),
+    PRIMARY KEY(entry_id, user_id),
+    FOREIGN KEY(entry_id) REFERENCES entries (_id)
+    FOREIGN KEY(user_id) REFERENCES entries (_id))`,
+    
+    (err, result) => {
+      if (err) {
+        console.error('Error creating the comments table');
+      } else {
+        console.log('Comments table created successfully');
+      }
+    }
+  );
+
+
+//create votes table (have a composite primary keys - entry id and user id)
+pool.query(
+  `
+  CREATE TABLE IF NOT EXIST votes (
+    entry_id BIGINT,
+    user_id BIGINT,
+    PRIMARY KEY(entry_id, user_id),
+    FOREIGN KEY(entry_id) REFERENCES entries (_id)
+    FOREIGN KEY(user_id) REFERENCES entries (_id))`,
+
+    (err, result) => {
+      if (err) {
+        console.error('Error creating the votes table');
+      } else {
+        console.log('Votes table created successfully');
+      }
+    }
+  );
+
+//create users table 
+pool.query(
+  `
+  CREATE TABLE IF NOT EXIST users (
+    _id BIGINT PRIMARY KEY)`,
+
+    (err, result) => {
+      if (err) {
+        console.error('Error creating the users table');
+      } else {
+        console.log('Users table created successfully');
+      }
+    }
+  );
+
 
 module.exports = {
   query: (text, params, callback) => {
