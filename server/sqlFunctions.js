@@ -133,7 +133,7 @@ sqlFunctions.getComments = (entryId) => {
     SELECT * FROM comments WHERE entryId= ${entryId}
     `
     )
-    .then((data) => console.log('The data for the comments:', data))
+    .then((data) => console.log('The data for the comments table:', data))
     .catch((err) => console.log('Error getting data for the comments', err));
 };
 
