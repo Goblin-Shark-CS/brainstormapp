@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
     name: 'main',
     initialState: {
-        projects: [],
+        session: {},
         entries: [
           {
-            id: 0, 
+            id: 0,
             message: 'The first brainstorm idea',
             voteCount: 0,
             userVote: false
@@ -18,17 +18,20 @@ export const mainSlice = createSlice({
             userVote: false
           },
           {
-            id: 1,
+            id: 2,
             message: 'The third brainstorm idea',
             voteCount: 0,
             userVote: false
           }
         ]
-    }, // use object for multiple states
+    },
     reducers: {
-        reducer1: (state) => state + 1,
-        reducer2: (state) => state - 1,
-        reducer3: (state, action) => state + action.payload,
+        addEntry: (state) => {
+          // Placeholder: add new entry
+          const newEntry = {id: 0, message: 'newEntry', voteCount: '0', userVote: null};
+          state.entries.push(newEntry);
+        },
+        showPayload: (state, action) => console.log(action.payload),
         increaseVote: (state) => { // TODO: Create function to increase vote count for specific entry
           // TODO: Increase vote count
           // TODO: Change user vote status
