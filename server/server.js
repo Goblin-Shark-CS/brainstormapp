@@ -13,8 +13,6 @@ const {PRODUCTION, PORT} = require('./config.js');
 
 const { errMsg } = require('./logging.js');
 
-console.log("errMsg:", errMsg("hello", "ERROR", 500));
-
 /**
  * API Routes
  */
@@ -60,7 +58,7 @@ app.use('/bundle.js', (req, res) => {
 
 app.get('/', (req, res) => {
   console.log('Request to main page.');
-  return res.status(200).sendFile(path.join(__dirname, '../build/index.html'));
+  return res.status(200).sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 
@@ -92,3 +90,48 @@ app.use(errorHandler);
 
 
 app.listen(PORT, () => { console.log(`Listening on port ${PORT}...`); });
+
+
+
+// Websocket server
+
+const { WebSocketServer } = require('ws')
+const wsserver = new WebSocketServer({ port: 443 })
+
+wsserver.on('connection', ws => {
+  // Try saving a cookie or session key to the ws object?
+  // Initialize events for new client
+  console.log('New client connected!')
+
+  // Read state from the database on initial join
+  //  ws.send(serialized_state);
+
+  ws.on('close', () => console.log('Client has disconnected!'))
+  ws.on('message', data => {
+  let parsedData;
+
+  try {
+    parsedData = JSON.parse(data);
+  }
+  catch (err) {
+    return console.log('Could not parse message: ', data)
+  }
+  // Route data
+  // switch (data.type) { }
+
+  // Note: we need to filter these sockets to make sure not every client
+
+  // Push message to the database here
+
+  // Do we read it back from the database? Optional: try without for now and see if it causes problems
+
+  // Simultaneously broadcast to clients
+  console.log(`distributing message: ${JSON.stringify(parsedData)}`)
+   wsserver.clients.forEach(client => {
+     client.send(`${JSON.stringify(parsedData)}`)
+   })
+ })
+ ws.onerror = function () {
+   console.log('websocket error')
+ }
+})
