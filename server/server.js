@@ -34,7 +34,7 @@ app.use(
   /* Create session cookie */
   (req, res) => {
     dbg('Request to join room: ', req.params.roomId);
-    res.redirect(`/view/${req.params.roomId}`);
+    res.redirect(`/view/${req.params.roomId}`)
   }
 )
 
@@ -92,6 +92,34 @@ app.listen(PORT, () => { dbg(`Listening on port ${PORT}...`); });
 
 
 
+
+
+const initialState = {
+  session: {},
+  entries: [
+    {
+      id: 0,
+      message: 'The first brainstorm idea (From Server)',
+      voteCount: 0,
+      userVote: null
+    },
+    {
+      id: 1,
+      message: 'The second brainstorm idea (From Server)',
+      voteCount: 0,
+      userVote: null
+    },
+    {
+      id: 2,
+      message: 'The third brainstorm idea (From Server)',
+      voteCount: 0,
+      userVote: null
+    }
+  ]
+}
+
+
+
 // Websocket server
 
 const { WebSocketServer } = require('ws')
@@ -115,32 +143,45 @@ wsserver.on('connection', ws => {
       return dbg('Could not parse message: ', msg)
     }
     // Route data
-    switch (parsedMsg.type) {
-      case "join":
-        // Validate session
-        // Read state from the database on initial join
-        // Store properties on ws.session
-        // setInfo();
-        // ws.send(serialized_state);
-        break;
-      case "message":
-        // Note: we need to filter clients by room
-        // Push message to the database here
-        // Do we read it back from the database? Caching issues...
-        // For now: try without sync and see if it causes problems
-        // Simultaneously broadcast to clients
-        const responseMsg = JSON.stringify({response: parsedMsg.message});
-        dbg(`distributing message: ${responseMsg}`)
-        wsserver.clients.forEach(client => {
-          client.send(responseMsg);
-          dbg("ws.session: " + ws.session);
-        })
-        break;
-      case "setUsername":
-        //
-        break;
-      default:
-        return dbg('Unknown message: ', parsedMsg);
+    // TODO: Error handling
+    let response;
+    try {
+      switch (parsedMsg.type) {
+        case "join":
+
+          // NOTE: We could do the join session with an initial Express request.
+
+          // Validate session
+          // Read state from the database on initial join
+          // Store properties on ws.session
+          dbg('Client joined.')
+          ws.session.userId = parsedMsg.userId; /* TODO: Set this */
+          response = JSON.stringify({type: 'init', state: initialState});
+          ws.send(response);
+          break;
+        case "message":
+
+          // Note: we need to filter clients by room
+          // Push message to the database here
+          // Do we read it back from the database? Caching issues...
+          // For now: try without sync and see if it causes problems
+          // Simultaneously broadcast to clients
+          const responseMsg = JSON.stringify({type: 'message', response: parsedMsg.message});
+          dbg(`distributing message: ${responseMsg}`)
+          wsserver.clients.forEach(client => {
+            client.send(responseMsg);
+            dbg("ws.session: " + ws.session);
+          })
+          break;
+        case "setUsername":
+          // Allow changing username
+          break;
+        default:
+          return dbg('Unknown message: ', parsedMsg);
+      }
+    }
+    catch (err) {
+      console.log(`ERROR: ${JSON.stringify(err)}. Unable to handle message: `, parsedMsg);
     }
 })
 
