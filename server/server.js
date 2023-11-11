@@ -9,9 +9,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 
-const CONFIG = require(path.join(__dirname, 'config.js'));
-const PORT = CONFIG.PORT;
+const {PRODUCTION, PORT} = require('./config.js');
 
+const { errMsg } = require('./logging.js');
+
+console.log("errMsg:", errMsg("hello", "ERROR", 500));
 
 /**
  * API Routes
