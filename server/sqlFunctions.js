@@ -6,23 +6,34 @@ const sqlFunctions = {};
 
 //insert a room into the database
 sqlFunctions.addRoom = async (roomname = null, password = null) => {
-  const _id = generate({ exactly: 1, wordsPerString: 2, separator: "-" });
   const text = `
   INSERT INTO rooms (_id, roomname, password)
   VALUES ($1, $2, $3)
+  ON CONFLICT (_id) DO NOTHING
   RETURNING *;`;
-  const values = [_id, roomname, password];
   let newRoom;
-  await pool
-    .query(text, values)
-    .then((data) => {
-      newRoom = data.rows[0];
-      console.log('Added to rooms table:', newRoom);
-    })
-    .catch((err) => console.log('Error adding a room to the database:', err));
+  let attempt = 0;
+
+  while (attempt < 5 && !newRoom) {
+    const _id = generate({ exactly: 1, wordsPerString: 2, separator: "-" });
+    const values = [_id, roomname, password];
+
+    await pool
+      .query(text, values)
+      .then((data) => {
+        if (data.rows.length > 0) {
+          newRoom = data.rows[0];
+          console.log('Added to rooms table:', newRoom);
+        }
+      })
+      .catch((err) => console.log('Error adding a room to the database:', err));
+
+    attempt++;
+  }
 
   return newRoom;
 };
+
 
 //insert users into the database
 sqlFunctions.addUser = async () => {
