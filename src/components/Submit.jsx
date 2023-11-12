@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-function SubmitComponent() {
+function Submit() {
   const dispatch = useDispatch();
 
   return (
@@ -18,4 +18,4 @@ function SubmitComponent() {
   )
 }
 
-export default SubmitComponent;
+export default Submit;

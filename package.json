@@ -1,7 +1,7 @@
 {
-  "name": "moodsight",
+  "name": "brainstormapp",
   "version": "1.0.0",
-  "description": "AI-assisted verbatim categorization and sentiment analysis",
+  "description": "Real-time public submissions and voting",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production node -r dotenv/config server/server.js",
@@ -11,21 +11,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/o-mirza/Moodsight.git"
+    "url": "git+https://github.com/Goblin-Shark-CS/brainstormapp.git"
   },
   "keywords": [
-    "sentiment",
-    "AI",
-    "verbatim",
-    "categorization",
-    "analysis"
+    "voting",
+    "polling",
+    "brainstorming",
+    "realtime",
+    "ideating"
   ],
-  "author": "Omar Mirza",
+  "author": "Goblin-Shark-CS",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/o-mirza/Moodsight/issues"
+    "url": "https://github.com/Goblin-Shark-CS/brainstormapp/issues"
   },
-  "homepage": "https://github.com/o-mirza/Moodsight#readme",
+  "homepage": "https://github.com/Goblin-Shark-CS/brainstormapp",
   "devDependencies": {
     "@babel/cli": "^7.23.0",
     "@babel/core": "^7.23.2",

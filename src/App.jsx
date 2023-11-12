@@ -1,7 +1,7 @@
 import React from "react";
-import EntriesComponent from "./components/Entries.jsx";
-import SubmitComponent from "./components/Submit.jsx";
-import DetailsComponent from "./components/Details.jsx";
+import Entries from "./components/Entries.jsx";
+import Submit from "./components/Submit.jsx";
+import Details from "./components/Details.jsx";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
-function App() {
+export default function App() {
   return (
     <Box display="flex" height="100vh" flexDirection="column">
         <AppBar position="static">
@@ -23,20 +23,18 @@ function App() {
           </Toolbar>
       </AppBar>
       <Box display="flex" height="100%">
-        <Box display="flex" flexDirection="column" width="60%">
+        <Box display="flex" flexDirection="column" width="60%" backgroundColor="#f6f6f6">
             <Box height="100%" overflow="scroll">
-              <EntriesComponent />
+              <Entries />
             </Box>
             <Box height="75px">
-              <SubmitComponent />
+              <Submit />
             </Box>
         </Box>
         <Box width="40%" backgroundColor="#eee">
-          <DetailsComponent />
+          <Details />
         </Box>
       </Box>
     </Box>
   );
 }
-
-export default App;
