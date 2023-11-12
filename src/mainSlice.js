@@ -14,7 +14,7 @@ export const mainSlice = createSlice({
       },
       {
         id: 1,
-        message: 'The second brainstorm idea',
+        message: 'The second brainstorm idea: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco',
         voteCount: 0,
         userVote: false
       },
