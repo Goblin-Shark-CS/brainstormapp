@@ -1,63 +1,55 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const mainSlice = createSlice({
-    name: 'main',
-    initialState: {
-        // username, board ID, etc
-        session: {},
-        entries: [
-          {
-            id: 0,
-            message: 'The first brainstorm idea',
-            voteCount: 0,
-            userVote: false
-          },
-          {
-            id: 1,
-            message: 'The second brainstorm idea',
-            voteCount: 0,
-            userVote: false
-          },
-          {
-            id: 2,
-            message: 'The third brainstorm idea',
-            voteCount: 0,
-            userVote: false
-          }
-        ]
+  name: 'main',
+  initialState: {
+    user_id: null,
+    room: {},      // {room_id, roomname}
+    entries: []    // [{entry_id, voteCount, userVote, message}, ...]
+  },
+  reducers: {
+    addEntry: (state, action) => {
+      const { entry_id, message } = action.payload;
+      state.entries.push({
+        id: entry_id,
+        voteCount: 0,
+        userVote: false,
+        message: message
+      });
     },
-    reducers: {
-        addEntry: (state) => {
-          // Placeholder: add new entry
-          const newEntry = {id: 0, message: 'newEntry', voteCount: '0', userVote: null};
-          state.entries.push(newEntry);
-        },
-        showPayload: (state, action) => console.log(action.payload),
-      
-        // Create function to change vote count for specific entry
-        increaseVote: (state, action) => {
-          // Get entry clicked
-          const entry = state.entries.find(item => item.id === Number(action.payload))
-          // Increase vote count for that entry
-          if (!entry.userVote) {
-            entry.voteCount++
-            entry.userVote = true;
-          } else {
-            entry.voteCount--
-            entry.userVote = false;
-          }
-        },
-        loadChat: (state, action) => {
-          // Completely replace state.
-          // NOTE: This is dangerous; it would be better to validate data from the backend.
-          console.log('Loading initial state.');
-          return action.payload
-        }
+    toggleVote: (state, action) => {
+      // Get entry clicked
+      const entry_id = action.payload;
+      const entry = state.entries.find(entry => entry.entry_id === Number(entry_id));
+      // Toggle userVote and voteCount for that entry
+      if (!entry.userVote) {
+        entry.voteCount++;
+        entry.userVote = true;
+      } else {
+        entry.voteCount--;
+        entry.userVote = false;
+      }
     },
+    changeRoomName: (state, action) => {
+      state.room.roomname = action.payload;
+    },
+    setInitialState: (state, action) => {
+      const { user_id, room, entries } = action.payload;
+      state.user_id = user_id;
+      state.room = room;
+      state.entries = entries;
+    },
+    loadChat: (state, action) => {
+      // Completely replace state.
+      // NOTE: This is dangerous; it would be better to validate data from the backend.
+      console.log('Loading initial state.');
+      return action.payload;
+    }
+  },
 });
 
 // Export actions for use in components
-export const { addEntry, showPayload, increaseVote, loadChat } = mainSlice.actions;
+export const { addEntry, toggleVote, changeRoomName, setInitialState, loadChat } = mainSlice.actions;
 
 // Export the reducer function for store configuration
 export default mainSlice.reducer;
