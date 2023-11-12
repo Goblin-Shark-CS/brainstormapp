@@ -238,8 +238,75 @@ sqlFunctions.getVoteCount = async (entryId) => {
 // sqlFunctions.getVoteCount(2).then((data) => console.log('RETURNED:', data));
 // sqlFunctions.getVoteCount(3).then((data) => console.log('RETURNED:', data));
 
-// delete vote
-// delete room (and all associated entries, votes, and comments)
+sqlFunctions.deleteVote = async (entry_id, user_id) => {
+  let vote;
+  await pool
+    .query(
+      `
+  DELETE  
+  FROM votes
+  WHERE user_id='${user_id}' and entry_id='${entry_id}'
+  RETURNING *;
+  `
+    )
+    .then((data) => {
+      vote = data.rows[0];
+      console.log('The removed vote:', vote);
+    })
+    .catch((err) => console.log('Error deleting the vote', err));
+  return vote;
+};
+
+// // deleteVote test
+// sqlFunctions.deleteVote(2, 1).then((vote) => console.log('RETURNED:', vote));
+
+sqlFunctions.deleteRoom = async (room_id) => {
+  let room;
+  await pool
+    .query(
+      `
+  DELETE
+  FROM rooms
+  WHERE _id = '${room_id}'
+  RETURNING *;
+  `
+    )
+    .then((data) => {
+      room = data.rows[0];
+      console.log('The deleted room:', room);
+    })
+    .catch((err) => console.log('Error deleting the room', err));
+  return room;
+};
+
+// // test deleteRoom
+// sqlFunctions
+//   .deleteRoom('cuddlyphone')
+//   .then((room) => console.log('RETURNED:', room));
+
+//Note: this function will give an error if deleting an entry with a comment. Will need to refactor to delete associated comments first. 
+sqlFunctions.deleteEntry = async (entry_id) => {
+  let entry;
+  await pool
+    .query(
+      `
+  DELETE
+  FROM entries
+  WHERE _id = '${entry_id}'
+  RETURNING *;
+  `
+    )
+    .then((data) => {
+      entry = data.rows[0];
+      console.log('The deleted entry:', entry);
+    })
+    .catch((err) => console.log('Error deleting the entry', err));
+  return entry;
+};
+
+// // test deleteEntry
+// sqlFunctions.deleteEntry(4).then((entry) => console.log('RETURNED:', entry));
+
 // update room name
 
 module.exports = sqlFunctions;
