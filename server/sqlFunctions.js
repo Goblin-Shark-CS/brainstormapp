@@ -4,86 +4,115 @@ const pool = require('./Models/brainstormModels');
 const sqlFunctions = {};
 
 //insert a room into the database
-sqlFunctions.addRoom = (id, roomname = null, password = null) => {
+sqlFunctions.addRoom = async (id, roomname = null, password = null) => {
+  const text = `
+  INSERT INTO rooms (_id, roomname, password)
+  VALUES ($1, $2, $3)
+  RETURNING *;`;
   const values = [id, roomname, password];
-  pool
-    .query(
-      `
-    INSERT INTO rooms (_id, roomname, password)
-    VALUES ($1, $2, $3)
-    RETURNING *;
-  `,
-      values
-    )
-    .then((data) => console.log('Added to rooms table:', data))
+  let newRoom;
+  await pool
+    .query(text, values)
+    .then((data) => {
+      newRoom = data.rows[0];
+      console.log('Added to rooms table:', newRoom);
+    })
     .catch((err) => console.log('Error adding a room to the database:', err));
+
+  return newRoom;
 };
 
-//insert an entry(it is user's message) into the database
-sqlFunctions.addEntry = (id, messageText, roomId, userId) => {
+//insert users into the database
+sqlFunctions.addUser = async () => {
   const text = `
-  INSERT INTO entries (_id, text, room_id, user_id, votes)
-      VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO users
+    DEFAULT VALUES 
+    RETURNING *;`;
+  let newUser;
+  await pool
+    .query(text)
+    .then((data) => {
+      newUser = data.rows[0];
+      console.log('Added to user table:', newUser);
+    })
+    .catch((err) => console.log('Error adding a user to the database:', err));
+  return newUser;
+};
+
+// // addUser test:
+// sqlFunctions.addUser(1).then((user) => console.log('RETURNED:', user));
+
+//insert an entry(a user's message) into the database
+sqlFunctions.addEntry = async (messageText, roomId, userId) => {
+  const text = `
+  INSERT INTO entries (text, room_id, user_id, votes)
+      VALUES ($1, $2, $3, $4)
       RETURNING *`;
 
-  const values = [id, messageText, roomId, userId, 0];
-  pool
+  const values = [messageText, roomId, userId, 0];
+  let entry;
+  await pool
     .query(text, values)
-    .then((data) => console.log('Added to entries table:', data))
+    .then((data) => {
+      entry = data.rows[0];
+      console.log('Added to entries table:', entry);
+    })
     .catch((err) => console.log('Error adding an entry to the database:', err));
+  return entry;
 };
-// sqlFunctions.addEntry(1, 'where do we go for dinner today', 1, 3, 1);
-// console.log('FINISHED');
+
+// // addEntry test
+// sqlFunctions
+//   .addEntry('Make a brainstorm app', 'greenelephant', 1)
+//   .then((entry) => console.log('RETURNED:', entry));
 
 //insert a comment into the database
-sqlFunctions.addComment = (entryId, userId, commentText) => {
+sqlFunctions.addComment = async (entryId, userId, commentText) => {
   const text = `
   INSERT INTO comments (entry_id, user_id, text)
       VALUES ($1, $2, $3)
-      RETURNING *`;
+      RETURNING *;`;
 
   const values = [entryId, userId, commentText];
-  pool
+  let newComment;
+  await pool
     .query(text, values)
-    .then((data) => console.log('Added to comment table:', data))
+    .then((data) => {
+      newComment = data.rows[0];
+      console.log('Added to comment table:', newComment);
+    })
     .catch((err) =>
       console.log('Error adding a comment to the database:', err)
     );
+  return newComment;
 };
-// sqlFunctions.addComment(1, 1, 'I agree!');
-// console.log('FINISHED');
+
+// // addComment test
+// sqlFunctions
+//   .addComment(3, 1, "let's think more on that")
+//   .then((comment) => console.log('RETURNED:', comment));
 
 //insert votes into the database
-sqlFunctions.addVote = (entryId, userId) => {
+sqlFunctions.addVote = async (entryId, userId) => {
   const text = `
   INSERT INTO votes (entry_id, user_id)
       VALUES ($1, $2)
       RETURNING *`;
 
   const values = [entryId, userId];
-  pool
+  let newVote;
+  await pool
     .query(text, values)
-    .then((data) => console.log('Added to votes table:', data))
+    .then((data) => {
+      newVote = data.rows[0];
+      console.log('Added to votes table:', newVote);
+    })
     .catch((err) => console.log('Error adding a vote to the database:', err));
-};
-// sqlFunctions.addVotes(1, 1);
-// console.log('FINISHED');
 
-//insert users into the database
-sqlFunctions.addUser = (userId) => {
-  const text = `
-  INSERT INTO users (_id)
-      VALUES ($1)
-      RETURNING *`;
-
-  const values = [userId];
-  pool
-    .query(text, values)
-    .then((data) => console.log('Added to user table:', data))
-    .catch((err) => console.log('Error adding a user to the database:', err));
+  return newVote;
 };
-// sqlFunctions.addUser(1);
-// console.log('FINISHED');
+// // addVote test
+// sqlFunctions.addVote(3, 2).then((vote) => console.log('RETURNED:', vote));
 
 // getRoom
 // take in an id paramter
@@ -153,7 +182,8 @@ sqlFunctions.getVoteCount = (entryId) => {
     );
 };
 
-//delete vote
+// delete vote
+// update room name
 
 // Other queries:
 // read
