@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 
-const {PRODUCTION, PORT} = require('./config.js');
+const { PRODUCTION, PORT } = require('./config.js');
 
 const { errMsg, dbg } = require('./logging.js');
 
@@ -19,13 +19,13 @@ const { errMsg, dbg } = require('./logging.js');
 
 
 app.use('/start',
-// Create room
-// Set cookie
-// Validate
-(req, res) => {
-  dbg('Creating room: ', res.locals.roomId);
-  res.sendStatus(200)
-})
+  // Create room
+  // Set cookie
+  // Validate
+  (req, res) => {
+    dbg('Creating room: ', res.locals.roomId);
+    res.sendStatus(200)
+  })
 
 
 app.use(
@@ -44,7 +44,7 @@ app.use(
   /* Send page */
   (req, res) => {
     dbg('Sending page: ', req.params.roomId);
-})
+  })
 
 
 
@@ -80,7 +80,7 @@ const defaultErr = {
   message: { err: 'An error occurred' }
 };
 
-function errorHandler (err, req, res, next) {
+function errorHandler(err, req, res, next) {
   const errorObj = Object.assign({}, defaultErr, err);
   dbg(errorObj.log);
   res.status(errorObj.status).json(errorObj.message);
@@ -111,7 +111,7 @@ const initialState = {
     },
     {
       id: 2,
-      message: 'The third brainstorm idea (From Server)',
+      message: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       voteCount: 0,
       userVote: null
     }
@@ -156,7 +156,7 @@ wsserver.on('connection', ws => {
           // Store properties on ws.session
           dbg('Client joined.')
           ws.session.userId = parsedMsg.userId; /* TODO: Set this */
-          response = JSON.stringify({type: 'init', state: initialState});
+          response = JSON.stringify({ type: 'init', state: initialState });
           ws.send(response);
           break;
         case "message":
@@ -166,7 +166,7 @@ wsserver.on('connection', ws => {
           // Do we read it back from the database? Caching issues...
           // For now: try without sync and see if it causes problems
           // Simultaneously broadcast to clients
-          const responseMsg = JSON.stringify({type: 'message', response: parsedMsg.message});
+          const responseMsg = JSON.stringify({ type: 'message', response: parsedMsg.message });
           dbg(`distributing message: ${responseMsg}`)
           wsserver.clients.forEach(client => {
             client.send(responseMsg);
@@ -183,10 +183,10 @@ wsserver.on('connection', ws => {
     catch (err) {
       console.log(`ERROR: ${JSON.stringify(err)}. Unable to handle message: `, parsedMsg);
     }
-})
+  })
 
 
- ws.onerror = function () {
-   dbg('websocket error')
- }
+  ws.onerror = function () {
+    dbg('websocket error')
+  }
 })
