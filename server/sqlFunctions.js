@@ -1,6 +1,6 @@
 //import pool
 const pool = require('./Models/brainstormModels');
-const { generate } = require("random-words");
+// const { generate } = require('random-words');
 
 const sqlFunctions = {};
 
@@ -15,7 +15,7 @@ sqlFunctions.addRoom = async (roomname = null, password = null) => {
   let attempt = 0;
 
   while (attempt < 5 && !newRoom) {
-    const _id = generate({ exactly: 1, wordsPerString: 2, separator: "-" });
+    const _id = generate({ exactly: 1, wordsPerString: 2, separator: '-' });
     const values = [_id, roomname, password];
 
     await pool
@@ -33,7 +33,6 @@ sqlFunctions.addRoom = async (roomname = null, password = null) => {
 
   return newRoom;
 };
-
 
 //insert users into the database
 sqlFunctions.addUser = async () => {
@@ -75,8 +74,7 @@ sqlFunctions.addEntry = async (messageText, roomId, userId) => {
 };
 
 // // addEntry test
-// sqlFunctions
-//   .addEntry('Make a brainstorm app', 'greenelephant', 1)
+// sqlFunctions.addEntry('Sleep in', 'bluebat', 2);
 //   .then((entry) => console.log('RETURNED:', entry));
 
 //insert a comment into the database
@@ -131,75 +129,184 @@ sqlFunctions.addVote = async (entryId, userId) => {
 // take in an _id paramter
 // it should return all the data for that room
 // if no _id is passed in, return an array of ALL rooms
-sqlFunctions.getRoom = (_id) => {
+sqlFunctions.getRoom = async (_id) => {
+  let room;
   if (_id === undefined) {
-    pool.query(
+    await pool
+      .query(
+        `
+      SELECT * FROM rooms;
       `
-      SELECT * FROM rooms
+      )
+      .then((data) => {
+        room = data.rows;
+        console.log('The data for the rooms:', room);
+      });
+  } else {
+    await pool
+      .query(
+        `
+      SELECT * FROM rooms WHERE _id='${_id}'
       `
-    );
+      )
+      .then((data) => {
+        room = data.rows[0];
+        console.log('The data for the room:', room);
+      })
+      .catch((err) => console.log('Error getting the data for the room:', err));
   }
-  pool
-    .query(
-      `
-      SELECT * FROM rooms WHERE _id=${_id}
-      `
-    )
-    .then((data) => console.log('The data for the room:', data))
-    .catch((err) => console.log('Error getting the data for the room:', err));
+  return room;
 };
+
+// test getRoom
+// sqlFunctions.getRoom().then((rooms) => console.log('RETURNED:', rooms));
+// sqlFunctions
+//   .getRoom('fuzzymug')
+//   .then((rooms) => console.log('RETURNED:', rooms));
 
 // getEntries
 // take in a room_id parameter
 // return an array of all the entries for that room
-sqlFunctions.getEntries = (roomId) => {
-  pool
+sqlFunctions.getEntries = async (roomId) => {
+  let entries;
+  await pool
     .query(
       `
-    SELECT * FROM entries WHERE roomId = ${roomId}
+    SELECT * FROM entries WHERE room_id = '${roomId}';
     `
     )
-    .then((data) =>
-      console.log('The data for the entry table of the room:', data)
-    )
+    .then((data) => {
+      entries = data.rows;
+      console.log('The data for the entry table of the room:', entries);
+    })
     .catch((err) => console.log('Error getting data for the entry table', err));
+  return entries;
 };
+
+// test getEntries
+// sqlFunctions
+//   .getEntries('bluebat')
+//   .then((data) => console.log('RETURNED:', data));
 
 // getComments
 // take in an entry_id
 // return array of all comments for that entry
-sqlFunctions.getComments = (entryId) => {
-  pool
+sqlFunctions.getComments = async (entryId) => {
+  let comments;
+  await pool
     .query(
       `
-    SELECT * FROM comments WHERE entryId= ${entryId}
+    SELECT * FROM comments WHERE entry_id= '${entryId}';
     `
     )
-    .then((data) => console.log('The data for the comments table:', data))
+    .then((data) => {
+      comments = data.rows;
+      console.log('The data for the comments table:', comments);
+    })
     .catch((err) => console.log('Error getting data for the comments', err));
+
+  return comments;
 };
+
+// test getComments
+// sqlFunctions.getComments(2).then((data) => console.log('RETURNED:', data));
+// sqlFunctions.getComments(5).then((data) => console.log('RETURNED:', data));
 
 // getVoteCount
 // take in an entry_id
 // return the number of votes for that entry
-sqlFunctions.getVoteCount = (entryId) => {
-  pool
+sqlFunctions.getVoteCount = async (entryId) => {
+  let count;
+  await pool
     .query(
       `
-    SELECT * FROM votes WHERE entryId=${entryId}
+    SELECT COUNT(*) FROM votes WHERE entry_id='${entryId}'
     `
     )
-    .then((data) => console.log('The number of votes for the entry:', data))
+    .then((data) => {
+      count = data.rows[0];
+      console.log('The number of votes for the entry:', count);
+    })
     .catch((err) =>
       console.log('Error getting the number of votes for the entry', err)
     );
+  return count;
 };
 
-// delete vote
-// update room name
+// // test getVoteCount
+// sqlFunctions.getVoteCount(1).then((data) => console.log('RETURNED:', data));
+// sqlFunctions.getVoteCount(2).then((data) => console.log('RETURNED:', data));
+// sqlFunctions.getVoteCount(3).then((data) => console.log('RETURNED:', data));
 
-// Other queries:
-// read
-// delete
+sqlFunctions.deleteVote = async (entry_id, user_id) => {
+  let vote;
+  await pool
+    .query(
+      `
+  DELETE  
+  FROM votes
+  WHERE user_id='${user_id}' and entry_id='${entry_id}'
+  RETURNING *;
+  `
+    )
+    .then((data) => {
+      vote = data.rows[0];
+      console.log('The removed vote:', vote);
+    })
+    .catch((err) => console.log('Error deleting the vote', err));
+  return vote;
+};
+
+// // deleteVote test
+// sqlFunctions.deleteVote(2, 1).then((vote) => console.log('RETURNED:', vote));
+
+sqlFunctions.deleteRoom = async (room_id) => {
+  let room;
+  await pool
+    .query(
+      `
+  DELETE
+  FROM rooms
+  WHERE _id = '${room_id}'
+  RETURNING *;
+  `
+    )
+    .then((data) => {
+      room = data.rows[0];
+      console.log('The deleted room:', room);
+    })
+    .catch((err) => console.log('Error deleting the room', err));
+  return room;
+};
+
+// // test deleteRoom
+// sqlFunctions
+//   .deleteRoom('cuddlyphone')
+//   .then((room) => console.log('RETURNED:', room));
+
+//Note: this function will give an error if deleting an entry with a comment. Will need to refactor to delete associated comments first. 
+sqlFunctions.deleteEntry = async (entry_id) => {
+  let entry;
+  await pool
+    .query(
+      `
+  DELETE
+  FROM entries
+  WHERE _id = '${entry_id}'
+  RETURNING *;
+  `
+    )
+    .then((data) => {
+      entry = data.rows[0];
+      console.log('The deleted entry:', entry);
+    })
+    .catch((err) => console.log('Error deleting the entry', err));
+  return entry;
+};
+
+// // test deleteEntry
+// sqlFunctions.deleteEntry(4).then((entry) => console.log('RETURNED:', entry));
+
+// update room name
 
 module.exports = sqlFunctions;
