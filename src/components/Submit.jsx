@@ -1,12 +1,27 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { reducer1, reducer2, reducer3 } from "../mainSlice";
+import { addEntry, toggleVote } from "../mainSlice";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 function Submit() {
   const dispatch = useDispatch();
+  const state = useSelector((state) => state.main);
+
+  function sendMessage(e) {
+    e.preventDefault(); // prevent page reload on submit
+
+    // Read the form data
+    const form = e.target;
+    const formData = new FormData(form).entries();
+    let message = Object.fromEntries(formData);
+
+    // Build custom message
+    message.type = "message";
+    webSocket.send(JSON.stringify(message));
+    console.log("Sending: ", message);
+  }
 
   return (
     <Box component="form" display="flex">

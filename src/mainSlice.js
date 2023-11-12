@@ -3,8 +3,9 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
   name: 'main',
   initialState: {
-    room: {}, // {room_id, roomname}
-    entries: []  // [{entry_id, voteCount, userVote, message}, ...]
+    user_id: null,
+    room: {},      // {room_id, roomname}
+    entries: []    // [{entry_id, voteCount, userVote, message}, ...]
   },
   reducers: {
     addEntry: (state, action) => {
@@ -33,10 +34,10 @@ export const mainSlice = createSlice({
       state.room.roomname = action.payload;
     },
     setInitialState: (state, action) => {
-      // Load state from database when first joining room.
-      // NOTE: This is dangerous; it would be better to validate data from the backend.
-      console.log('Loading initial state.');
-      return action.payload;
+      const { user_id, room, entries } = action.payload;
+      state.user_id = user_id;
+      state.room = room;
+      state.entries = entries;
     },
     loadChat: (state, action) => {
       // Completely replace state.
