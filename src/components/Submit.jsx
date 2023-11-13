@@ -59,7 +59,7 @@ function Submit() {
     message.type = "message";
     webSocket.send(JSON.stringify(message));
     console.log("Sending: ", message);
-    // displatch(addEntry)
+    dispatch(addEntry(message));
   }
 
   return (
