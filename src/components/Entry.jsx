@@ -43,7 +43,7 @@ function Entry(props) {
             {voteButton}
           </Box>
           <Box flex="1" padding="16px 10px 10px 0px" fontSize="20">
-            {props.messageContent}
+            {props.entryContent}
           </Box>
         </Box>
       </Paper>
