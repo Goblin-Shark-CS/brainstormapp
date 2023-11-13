@@ -11,8 +11,6 @@ ws_url.port = 443;
 
 
 export const store = configureStore({
-    reducer: {
-        main: mainReducer,
-    },
+    reducer: { main: mainReducer, },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(webSocketMiddleware(ws_url.toString())),
 });

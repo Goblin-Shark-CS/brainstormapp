@@ -8,7 +8,7 @@ export default function CreateRoom() {
           <div>Brainstorm!</div>
           <div>[Logo]</div>
           <div>
-            <form action="app.html">
+            <form action="start">
               <button>Create New Brainstorm!</button>
             </form>
           </div>
