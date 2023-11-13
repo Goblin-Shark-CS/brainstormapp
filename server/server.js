@@ -19,36 +19,24 @@ const roomController = require('./controllers/room/roomController.js');
  * API Routes
  */
 
-// Creates a new room, and a new user, then redirects the user to the room.
-app.use(
-  '/start',
-  roomController.createRoom,
-  sessionController.createUser,
-  (req, res) => {
-    dbg('Creating room: ', res.locals.roomId);
-    // redirect user to newly created room
-    res.redirect(`/join/${res.locals.roomId}`);
-  }
-);
+// Creates a new room then redirects client to the room.
+app.use('/start', roomController.createRoom, (req, res) => {
+  dbg('Creating room: ', res.locals.roomId);
+  // redirect user to newly created room
+  res.redirect(`/join/${res.locals.roomId}`);
+});
 
-app.use(
-  '/join/:roomId',
-  /* Match room ID */
-  /* Create session cookie */
-  (req, res) => {
-    dbg('Request to join room: ', req.params.roomId);
-    res.redirect(`/view/${req.params.roomId}`);
-  }
-);
+// Creates a new user, stores the user_id in the client's cookies, then redirects to view
+app.use('/join/:roomId', sessionController.createUser, (req, res) => {
+  dbg('Request to join room: ', req.params.roomId);
+  res.cookie('user_id', res.locals.user_id);
+  res.redirect(`/view/${req.params.roomId}`);
+});
 
-app.use(
-  '/view/:roomId',
-  /* Validate session cookie */
-  /* Send page */
-  (req, res) => {
-    dbg('Sending page: ', req.params.roomId);
-  }
-);
+app.use('/view/:roomId', (req, res) => {
+  dbg('Sending page: ', req.params.roomId);
+  res.status(200).sendFile(path.join(__dirname, '../public/app.html'));
+});
 
 /**
  * Static Pages
@@ -99,8 +87,15 @@ app.listen(PORT, () => {
   dbg(`Listening on port ${PORT}...`);
 });
 
+// initialState: {
+//   user_id: null,
+//   room: {},      // {room_id, roomname}
+//   entries: []    // [{entry_id, voteCount, userVote, message}, ...]
+// },
+
 const initialState = {
-  session: {},
+  user_id: null,
+  room: null,
   entries: [
     {
       id: 0,

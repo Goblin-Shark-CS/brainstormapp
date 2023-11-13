@@ -4,12 +4,12 @@ const sessionController = {};
 
 const COOKIE_OPTIONS = { httpOnly: true };
 
-// Creates a new user in the database. Then sets a cookie with the user's id.
+// Creates a new user in the database. Then puts the user's id on locals.
 sessionController.createUser = (req, res, next) => {
   sqlFunctions
     .addUser()
     .then((user) => {
-      res.cookie('user_id', user._id);
+      res.locals.user_id = user._id;
       return next();
     })
     .catch(next);
