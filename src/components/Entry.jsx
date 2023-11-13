@@ -13,37 +13,23 @@ function Entry(props) {
   const { entries } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
-  // TO DO: onClick -> dispatch(toggleVote(entry_id));
   let voteButton;
   if (props.userVote) {
     voteButton = (
       <IconButton color="primary" aria-label="vote" size="small">
-        <FavoriteIcon />
+        <FavoriteIcon style={{ fill: '#E37383' }} />
       </IconButton>
     );
   } else {
     voteButton = (
-      <IconButton color="primary" aria-label="vote" size="small" disabled>
-        <FavoriteOutlinedIcon />
+      <IconButton color="primary" aria-label="vote" size="small" style={{ cursor: 'pointer' }}>
+        <FavoriteIcon style={{ fill: '#D3D3D3' }} />
       </IconButton>
     );
   }
 
-  function submitVote() {
-    
-  }
-
-  const favAnimation = keyframes`
-    from {
-      transform: 0deg;
-    }
-    to {
-      transform: 360deg;
-    }
-  `;
-
   return (
-    <Box margin="20">
+    <Box margin="20" onClick={() => dispatch(toggleVote(props.entry))} style={{ cursor: 'pointer', userSelect: 'none' }} >
       <Paper>
         <Box display="flex" padding="10">
           <Box
@@ -57,8 +43,6 @@ function Entry(props) {
           <Box 
             flex="0 0 auto" 
             padding="10px 10px 10px 0px"
-            onClick={() => {dispatch(toggleVote())}}
-            // animation={`${favAnimation} 1s infinite ease`}
           >
             {voteButton}
           </Box>
