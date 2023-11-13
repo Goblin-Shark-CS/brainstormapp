@@ -61,6 +61,16 @@ app.get('/', (req, res) => {
 });
 
 
+app.get('/index.html', (req, res) => {
+  return res.redirect('/');
+});
+
+
+app.get('/style.css', (req, res) => {
+  return res.status(200).sendFile(path.join(__dirname, '../src/style.css'));
+});
+
+
 /**
  * 404 handler
  */
