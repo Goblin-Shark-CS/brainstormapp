@@ -6,6 +6,8 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+import { styled } from '@mui/material/styles'; 
+import { keyframes } from '@mui/system';
 
 function Entry(props) {
   const { entries } = useSelector((state) => state.main);
@@ -27,6 +29,19 @@ function Entry(props) {
     );
   }
 
+  function submitVote() {
+    
+  }
+
+  const favAnimation = keyframes`
+    from {
+      transform: 0deg;
+    }
+    to {
+      transform: 360deg;
+    }
+  `;
+
   return (
     <Box margin="20">
       <Paper>
@@ -39,7 +54,12 @@ function Entry(props) {
           >
             {props.voteCount}
           </Box>
-          <Box flex="0 0 auto" padding="10px 10px 10px 0px">
+          <Box 
+            flex="0 0 auto" 
+            padding="10px 10px 10px 0px"
+            onClick={() => {dispatch(toggleVote())}}
+            // animation={`${favAnimation} 1s infinite ease`}
+          >
             {voteButton}
           </Box>
           <Box flex="1" padding="16px 10px 10px 0px" fontSize="20">
