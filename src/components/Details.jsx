@@ -55,7 +55,7 @@ export default function Details() {
               fullWidth
               id="standard-read-only-input"
               label=""
-              defaultValue="http://localhost:8080/goblin-shark"
+              defaultValue={window.location.href}
               InputProps={{
                 readOnly: true,
               }}
@@ -77,12 +77,12 @@ export default function Details() {
         >
           <QRCode
             size={256}
-            style={{ 
-              height: "auto", 
-              maxWidth: "100%", 
+            style={{
+              height: "auto",
+              maxWidth: "100%",
               width: "100%",
             }}
-            value={"http://10.0.11.113:8080/"} /* concatenate room_id */
+            value={window.location.href} /* concatenate room_id */
             viewBox={`0 0 256 256`}
           />
         </div>
