@@ -170,9 +170,15 @@ wsserver.on('connection', (ws) => {
           // Do we read it back from the database? Yes.
           // TODO: Create entry_id in database
           // TODO: send Message objects with unique ID values.
+          let entry_id;
+          await sqlFunctions
+            .addEntry(message.entry, ws.session.room_id, ws.session.user_id)
+            .then((entry) => {
+              entry_id = entry._id;
+            });
           const entryMessage = JSON.stringify({
             type: 'entry',
-            entry: { text: message.entry, entry_id: null },
+            entry: { text: message.entry, entry_id },
           });
           dbg(`distributing message: ${entryMessage}`);
           // Broadcast to all users
