@@ -13,15 +13,14 @@ export default function Details() {
   const { room } = useSelector((state) => state.main);
   const roomId = room ? room.room_id : "";
 
-  const url = "http://10.0.11.113:8080/" + roomId;
+  // const url = "http://10.0.11.113:8080/join/" + roomId;
+  const url = window.location.toString();
 
   const CopyToClipboardButton = () => {
     const [open, setOpen] = useState(false);
     const handleClick = () => {
       setOpen(true);
-      navigator.clipboard.writeText(
-        window.location.toString() + "goblin-shark"
-      );
+      navigator.clipboard.writeText(url);
     };
 
     return (
