@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { reducer1, reducer2, reducer3 } from "../mainSlice";
+// import { reducer1, reducer2, reducer3 } from "../mainSlice";
 import { Button, Snackbar } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -10,15 +10,17 @@ import QRCode from "react-qr-code";
 
 export default function Details() {
   const dispatch = useDispatch();
-  const entries = useSelector((state) => state.entries);
+  const { room } = useSelector((state) => state.main);
+  const roomId = room ? room.room_id : "";
+
+  // const url = "http://10.0.11.113:8080/join/" + roomId;
+  const url = window.location.toString();
 
   const CopyToClipboardButton = () => {
     const [open, setOpen] = useState(false);
     const handleClick = () => {
       setOpen(true);
-      navigator.clipboard.writeText(
-        window.location.toString() + "goblin-shark"
-      );
+      navigator.clipboard.writeText(url);
     };
 
     return (
@@ -55,7 +57,7 @@ export default function Details() {
               fullWidth
               id="standard-read-only-input"
               label=""
-              defaultValue="http://localhost:8080/goblin-shark"
+              defaultValue={url}
               InputProps={{
                 readOnly: true,
               }}
@@ -77,12 +79,8 @@ export default function Details() {
         >
           <QRCode
             size={256}
-            style={{ 
-              height: "auto", 
-              maxWidth: "100%", 
-              width: "100%",
-            }}
-            value={"http://10.0.11.113:8080/"} /* concatenate room_id */
+            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+            value={url}
             viewBox={`0 0 256 256`}
           />
         </div>

@@ -29,7 +29,7 @@ app.use('/start',
     dbg('Creating room: ', res.locals.roomId);
     // redirect user to newly created room
     res.redirect(`/join/${res.locals.roomId}`);
-});
+  });
 
 // Creates a new user, stores the user_id in the client's cookies, then shows main app
 app.use('/join/:roomId', sessionController.createUser, (req, res) => {
@@ -155,10 +155,11 @@ wsserver.on('connection', (ws) => {
 
           //send user all information about room by putting it in the state
           const entries = await sqlFunctions.getEntries(ws.session.room_id);
+          const room = await sqlFunctions.getRoom(ws.session.room_id);
           entries.forEach((entry) => (entry.userVote = false));
           const state = {
             user_id: ws.session.user_id,
-            room: { room_id: ws.session.room_id, room_name: null },
+            room,
             entries,
           };
 
