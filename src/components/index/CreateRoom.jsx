@@ -8,12 +8,12 @@ export default function CreateRoom() {
           <div className = "main-name" > IdeaStation </div>
           <div classnName = "logo"><img src='/assets/brainstorming.png' alt="IdeaStation"  height = {'25%'}/> </div>
           <div>
-            <form action="app.html">
+            <form action="start">
               <button className="button">Create Room </button>
             </form>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
