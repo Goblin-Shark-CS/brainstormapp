@@ -1,6 +1,6 @@
 //import pool
 const pool = require('./Models/brainstormModels');
-// const { generate } = require('random-words');
+const { generate } = require('random-words');
 
 const sqlFunctions = {};
 
@@ -16,7 +16,7 @@ sqlFunctions.addRoom = async (roomname = null, password = null) => {
 
   while (attempt < 5 && !newRoom) {
     const _id = generate({ exactly: 1, wordsPerString: 2, separator: '-' });
-    const values = [_id, roomname, password];
+    const values = [..._id, roomname, password];
 
     await pool
       .query(text, values)
