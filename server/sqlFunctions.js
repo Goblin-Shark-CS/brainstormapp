@@ -55,7 +55,7 @@ sqlFunctions.addUser = async () => {
 };
 
 // // addUser test:
-// sqlFunctions.addUser(1).then((user) => console.log('RETURNED:', user));
+// sqlFunctions.addUser().then((user) => console.log('RETURNED:', user));
 
 //insert an entry(a user's message) into the database
 sqlFunctions.addEntry = async (messageText, roomId, userId) => {

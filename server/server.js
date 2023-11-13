@@ -19,11 +19,17 @@ const roomController = require('./controllers/room/roomController.js');
  * API Routes
  */
 
-app.use('/start', roomController.createRoom, (req, res) => {
-  dbg('Creating room: ', res.locals.roomId);
-  // redirect user to newly created room
-  res.redirect(`/join/${res.locals.roomId}`);
-});
+// Creates a new room, and a new user, then redirects the user to the room.
+app.use(
+  '/start',
+  roomController.createRoom,
+  sessionController.createUser,
+  (req, res) => {
+    dbg('Creating room: ', res.locals.roomId);
+    // redirect user to newly created room
+    res.redirect(`/join/${res.locals.roomId}`);
+  }
+);
 
 app.use(
   '/join/:roomId',
@@ -120,6 +126,7 @@ const initialState = {
 // Websocket server
 
 const { WebSocketServer } = require('ws');
+const sessionController = require('./controllers/user/sessionController.js');
 const wsserver = new WebSocketServer({ port: 443 });
 
 wsserver.on('connection', (ws) => {
