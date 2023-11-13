@@ -3,9 +3,12 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
   name: 'main',
   initialState: {
-    user_id: null,
-    room: {}, // {room_id, room_name}
-    entries: [], // [{entry_id, voteCount, userVote, message}, ...]
+    user_id: "",
+    room: {
+      room_id: "",
+      roomname: ""
+    },
+    entries: []    // [{entry_id, voteCount, userVote, message}, ...]
   },
   reducers: {
     addEntry: (state, action) => {

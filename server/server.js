@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
+app.use('/assets', express.static('src/assets'))
 
 const { PRODUCTION, PORT } = require('./config.js');
 
@@ -22,11 +23,13 @@ const sqlFunctions = require('./sqlFunctions.js');
  */
 
 // Creates a new room then redirects client to the room.
-app.use('/start', roomController.createRoom, (req, res) => {
-  dbg('Creating room: ', res.locals.roomId);
-  // redirect user to newly created room
-  res.redirect(`/join/${res.locals.roomId}`);
-});
+app.use('/start',
+  roomController.createRoom,
+  (req, res) => {
+    dbg('Creating room: ', res.locals.roomId);
+    // redirect user to newly created room
+    res.redirect(`/join/${res.locals.roomId}`);
+  });
 
 // Creates a new user, stores the user_id in the client's cookies, then shows main app
 app.use('/join/:roomId', sessionController.createUser, (req, res) => {
@@ -153,6 +156,7 @@ wsserver.on('connection', (ws) => {
           //send user all information about room by putting it in the state
           const entries = await sqlFunctions.getEntries(ws.session.room_id);
           // add userVote property to each vote
+          const room = await sqlFunctions.getRoom(ws.session.room_id);
           entries.forEach((entry) => (entry.userVote = false));
           // add voteCount property to each vote
           for (let i = 0; i < entries.length; i++) {
@@ -164,7 +168,7 @@ wsserver.on('connection', (ws) => {
 
           const state = {
             user_id: ws.session.user_id,
-            room: { room_id: ws.session.room_id, room_name: null },
+            room,
             entries,
           };
 
