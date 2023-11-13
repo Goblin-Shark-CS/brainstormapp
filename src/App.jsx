@@ -23,7 +23,7 @@ export default function App() {
   }, []);
 
   return (
-    <Box display="flex" height="100vh" flexDirection="column">
+    <Box display="flex" height={window.innerHeight} flexDirection="column">
       <AppBar position="absolute">
         {" "}
         {/** Changed from static to absolute */}
