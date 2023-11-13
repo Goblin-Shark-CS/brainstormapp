@@ -1,11 +1,11 @@
 //import pool
 const pool = require('./Models/brainstormModels');
-const { generate } = require('random-words');
 
 const sqlFunctions = {};
 
 //insert a room into the database
 sqlFunctions.addRoom = async (roomname = null, password = null) => {
+  const { generate } = await import('random-words');
   const text = `
   INSERT INTO rooms (_id, roomname, password)
   VALUES ($1, $2, $3)
