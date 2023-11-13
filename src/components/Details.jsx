@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import QRCode from "react-qr-code";
+import Typography from "@mui/material/Typography";
 
 export default function Details() {
   const dispatch = useDispatch();
@@ -50,7 +51,11 @@ export default function Details() {
         color="#999"
         fontSize="24px"
       >
-        <p>Share the link below:</p>
+        <p>
+          <Typography variant="h5" color="inherit" component="div">
+            Share the link below:
+          </Typography>
+        </p>
         <Box display="flex">
           <Box width="100%" padding="0px 10px">
             <TextField
@@ -71,17 +76,15 @@ export default function Details() {
         <div
           style={{
             height: "auto",
-            margin: "50 auto",
+            margin: "50 0 0 0",
             maxWidth: 400,
             width: "100%",
             opacity: 0.4,
           }}
         >
           <QRCode
-            size={256}
             style={{ height: "auto", maxWidth: "100%", width: "100%" }}
             value={url}
-            viewBox={`0 0 256 256`}
           />
         </div>
       </Box>
