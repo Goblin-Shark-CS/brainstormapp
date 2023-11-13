@@ -15,6 +15,7 @@ const { errMsg, dbg } = require('./logging.js');
 
 const roomController = require('./controllers/room/roomController.js');
 const sessionController = require('./controllers/user/sessionController.js');
+const sqlFunctions = require('./sqlFunctions.js');
 
 /**
  * API Routes
@@ -31,10 +32,11 @@ app.use('/start', roomController.createRoom, (req, res) => {
 app.use('/join/:roomId', sessionController.createUser, (req, res) => {
   dbg('Request to join room: ', req.params.roomId);
   res.cookie('user_id', res.locals.user_id);
+  res.cookie('room_id', req.params.roomId);
   res.redirect(`/view/${req.params.roomId}`);
 });
 
-app.use('/view/:roomId', (req, res) => {
+app.use('/view/:roomId/:userId', (req, res) => {
   dbg('Sending page: ', req.params.roomId);
   res.status(200).sendFile(path.join(__dirname, '../public/app.html'));
 });
@@ -96,30 +98,28 @@ app.listen(PORT, () => {
 
 const initialState = {
   user_id: null,
-  room: null,
+  room_id: null,
   entries: [
     {
       id: 0,
       text: 'The first brainstorm idea (From Server)',
       voteCount: 0,
-      userVote: false
+      userVote: false,
     },
     {
       id: 1,
       text: 'The second brainstorm idea (From Server)',
       voteCount: 0,
-      userVote: false
+      userVote: false,
     },
     {
       id: 2,
       text: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       voteCount: 0,
-      userVote: false
-    }
-  ]
-}
-
-
+      userVote: false,
+    },
+  ],
+};
 
 // Websocket server
 
@@ -134,7 +134,7 @@ wsserver.on('connection', (ws) => {
 
   ws.on('close', () => dbg('Client has disconnected!'));
 
-  ws.on('message', (rawMessage) => {
+  ws.on('message', async (rawMessage) => {
     let message;
     try {
       message = JSON.parse(rawMessage);
@@ -153,7 +153,21 @@ wsserver.on('connection', (ws) => {
           dbg('Client joined.');
           // Store properties on ws.session
           ws.session.user_id = message.user_id; /* TODO: Set this */
-          response = JSON.stringify({ type: 'init', state: initialState });
+          ws.session.room_id = message.room_id;
+
+          //send user all information about room by putting it in the state
+          const entries = await sqlFunctions.getEntries(ws.session.room_id);
+          entries.forEach((entry) => (entry.userVote = false));
+          const state = {
+            user_id: ws.session.user_id,
+            room: { room_id: ws.session.room_id, room_name: null },
+            entries,
+          };
+
+          const response = JSON.stringify({
+            type: 'init',
+            state,
+          });
           ws.send(response);
           break;
         case 'entry':
