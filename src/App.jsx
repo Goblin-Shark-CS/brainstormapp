@@ -31,7 +31,7 @@ export default function App() {
 
 
   return (
-    <Box display="flex" height="100vh" flexDirection="column">
+    <Box display="flex" height={window.innerHeight} flexDirection="column">
       <AppBar position="absolute">
         {" "}
         {/** Changed from static to absolute */}
@@ -88,7 +88,17 @@ export default function App() {
           backgroundColor="#f6f6f6"
         >
           {/** Entries Area */}
-          <Box height="100%" overflow="scroll" marginTop="50px">
+          <Box
+            height="100%"
+            overflow="scroll"
+            marginTop="50px"
+            paddingBottom="50px"
+            sx={{
+              // other styles you might want to add
+              maskImage:
+                "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
+            }}
+          >
             <Entries />
           </Box>
 

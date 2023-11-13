@@ -12,9 +12,9 @@ export const mainSlice = createSlice({
   },
   reducers: {
     addEntry: (state, action) => {
-      const { entry_id, text } = action.payload;
+      const { _id, text } = action.payload;
       state.entries.push({
-        id: entry_id,
+        _id: _id,
         voteCount: 0,
         userVote: false,
         text,
@@ -22,16 +22,27 @@ export const mainSlice = createSlice({
     },
     toggleVote: (state, action) => {
       // Get entry clicked
+      console.log('ACTION', action);
+      console.log('PAYLOAD', action.payload);
       const entry = state.entries.find(
-        (entry) => entry.id === Number(action.payload)
+        (entry) => entry._id === Number(action.payload)
       );
+      console.log('ENTRY:', entry);
       // Toggle userVote and voteCount for that entry
       if (!entry.userVote) {
-        entry.voteCount++;
         entry.userVote = true;
       } else {
-        entry.voteCount--;
         entry.userVote = false;
+      }
+    },
+    incrementVote: (state, action) => {
+      const entry = state.entries.find(
+        (entry) => entry._id === Number(action.payload._id)
+      );
+      if (action.payload.add) {
+        entry.voteCount++;
+      } else {
+        entry.voteCount--;
       }
     },
     changeRoomName: (state, action) => {
@@ -56,6 +67,7 @@ export const mainSlice = createSlice({
 export const {
   addEntry,
   toggleVote,
+  incrementVote,
   changeRoomName,
   setInitialState,
   loadChat,
