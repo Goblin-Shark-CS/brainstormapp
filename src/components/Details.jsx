@@ -6,6 +6,7 @@ import { Button, Snackbar } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import QRCode from "react-qr-code";
 
 export default function Details() {
   const dispatch = useDispatch();
@@ -65,12 +66,22 @@ export default function Details() {
           <br />
           <CopyToClipboardButton />
         </Box>
-        <br />
-        <img
-          src="https://imgur.com/n5PeKG9.png"
-          height="300px"
-          style={{ opacity: 0.6 }}
-        />
+        <div
+          style={{
+            height: "auto",
+            margin: "50 auto",
+            maxWidth: 400,
+            width: "100%",
+            opacity: 0.4,
+          }}
+        >
+          <QRCode
+            size={256}
+            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+            value={"http://10.0.11.113:8080/"} /* concatenate room_id */
+            viewBox={`0 0 256 256`}
+          />
+        </div>
       </Box>
     </Box>
   );
