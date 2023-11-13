@@ -160,7 +160,7 @@ wsserver.on('connection', ws => {
         case "entry":
           // Push message to the database here
           // Do we read it back from the database? Yes.
-          // TODO: Create message_id in database
+          // TODO: Create entry_id in database
           // TODO: send Message objects with unique ID values.
           const entryMessage = JSON.stringify({ type: 'entry', entry: {text: message.entry, entry_id: null }});
           dbg(`distributing message: ${entryMessage}`)
