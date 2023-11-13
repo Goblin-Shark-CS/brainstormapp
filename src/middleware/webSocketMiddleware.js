@@ -5,32 +5,40 @@ export default function webSocketMiddleware(wsUrl) {
 
     const onOpen = (store) => (event) => {
         console.log("We are connected")
-        webSocket.send(JSON.stringify({ type: "join" }));
+        socket.send(JSON.stringify({ type: "join" }));
     };
 
     const onClose = (store) => (event) => { };
 
     const onMessage = (store) => (event) => {
-        const message = JSON.parse(event.data);
-        console.log(message);
-        switch (message.type) {
-            case "init":
-                console.log("Init message. State: ", message.state);
-                dispatch(setInitialState(message.state));
-                break;
-            case "message":
-                // Server format: {"response": String }
-                const entry_id = message.response._id;
-                const message = message.response.message;
-                dispatch(addEntry({ entry_id, message }));
-                console.log("New message");
-                break;
-        };
+      let message;
+      console.log('Received Message: ', event);
+      try {
+        message = JSON.parse(event.data);
+      }
+      catch (err) {
+        return console.log('Could not parse message data: ', event.data)
+      }
+
+      switch (message.type) {
+        case 'init':
+          console.log("Init message. State: ", message.state);
+          store.dispatch(setInitialState(message.state));
+          break;
+        case 'entry':
+          console.log('New entry: ', message.entry);
+          store.dispatch(addEntry(message.entry));
+          break;
+
+        default:
+          return console.log('Unknown message type: ', message.type);
+      }
     };
 
     return store => next => action => {
         switch (action.type) {
             case 'WEBSOCKET_CONNECT':
+                console.log("RUN WEBSOCKET_CONNECT");
                 if (socket !== null) {
                     socket.close();
                 }
