@@ -10,10 +10,10 @@ export default function Entries(props) {
 
   const entriesBundle = [...entries]
     .sort((a, b) => b.voteCount - a.voteCount)
-    .map(({ id, voteCount, userVote, text }) => (
+    .map(({ _id, voteCount, userVote, text }) => (
       <Entry
-        key={id}
-        entry={id}
+        key={_id}
+        entry={_id}
         voteCount={voteCount}
         userVote={userVote}
         entryContent={text}
