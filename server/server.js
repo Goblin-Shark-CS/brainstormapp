@@ -36,9 +36,9 @@ app.use('/join/:roomId', sessionController.createUser, (req, res) => {
   res.redirect(`/view/${req.params.roomId}`);
 });
 
-app.use('/view/:roomId/:userId', (req, res) => {
+app.use('/view/:roomId', (req, res) => {
   dbg('Sending page: ', req.params.roomId);
-  res.status(200).sendFile(path.join(__dirname, '../public/app.html'));
+  res.status(200).sendFile(path.join(__dirname, '../dist/app.html'));
 });
 
 /**
@@ -50,7 +50,7 @@ app.use('/bundle.js', (req, res) => {
 
 app.get('/', (req, res) => {
   dbg('Request to main page.');
-  return res.status(200).sendFile(path.join(__dirname, '../public/index.html'));
+  return res.status(200).sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 app.get('/index.html', (req, res) => {
