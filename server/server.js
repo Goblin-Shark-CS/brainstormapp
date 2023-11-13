@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
+app.use('/assets', express.static('src/assets'))
 
 const { PRODUCTION, PORT } = require('./config.js');
 

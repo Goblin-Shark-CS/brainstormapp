@@ -24,6 +24,7 @@ module.exports = {
             '/start': 'http://localhost:3000',
             '/join': 'http://localhost:3000',
             '/view': 'http://localhost:3000',
+            '/assets': 'http://localhost:3000'
             // need to list for every endpoint used
         },
     },
