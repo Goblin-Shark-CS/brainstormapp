@@ -111,19 +111,19 @@ const initialState = {
       id: 0,
       text: 'The first brainstorm idea (From Server)',
       voteCount: 0,
-      userVote: null
+      userVote: false
     },
     {
       id: 1,
       text: 'The second brainstorm idea (From Server)',
       voteCount: 0,
-      userVote: null
+      userVote: false
     },
     {
       id: 2,
       text: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       voteCount: 0,
-      userVote: null
+      userVote: false
     }
   ]
 }
