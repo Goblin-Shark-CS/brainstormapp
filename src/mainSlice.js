@@ -9,12 +9,12 @@ export const mainSlice = createSlice({
   },
   reducers: {
     addEntry: (state, action) => {
-      const { entry_id, message } = action.payload;
+      const { entry_id, text } = action.payload;
       state.entries.push({
         id: entry_id,
         voteCount: 0,
         userVote: false,
-        message: message
+        text
       });
     },
     toggleVote: (state, action) => {

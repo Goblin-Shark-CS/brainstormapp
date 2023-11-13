@@ -99,19 +99,19 @@ const initialState = {
   entries: [
     {
       id: 0,
-      message: 'The first brainstorm idea (From Server)',
+      text: 'The first brainstorm idea (From Server)',
       voteCount: 0,
       userVote: null
     },
     {
       id: 1,
-      message: 'The second brainstorm idea (From Server)',
+      text: 'The second brainstorm idea (From Server)',
       voteCount: 0,
       userVote: null
     },
     {
       id: 2,
-      message: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      text: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       voteCount: 0,
       userVote: null
     }
@@ -129,59 +129,55 @@ wsserver.on('connection', ws => {
   // Try saving a cookie or session key to the ws object?
   // Initialize events for new client
   dbg('New client connected!')
-  ws.session = "Secret";
+  ws.session = {secret: "Secret Info Here"};
 
 
   ws.on('close', () => dbg('Client has disconnected!'))
 
-  ws.on('message', msg => {
-    let parsedMsg;
+  ws.on('message', rawMessage => {
+    let message;
     try {
-      parsedMsg = JSON.parse(msg);
+      message = JSON.parse(rawMessage);
     }
     catch (err) {
-      return dbg('Could not parse message: ', msg)
+      return dbg('Could not parse message: ', rawMessage)
     }
     // Route data
     // TODO: Error handling
     let response;
     try {
-      switch (parsedMsg.type) {
+      switch (message.type) {
         case "join":
-
-          // NOTE: We could do the join session with an initial Express request.
-
-          // Validate session
-          // Read state from the database on initial join
-          // Store properties on ws.session
+          // NOTE: Initial handshake is done in Express. Session must exist at this point.
+          // TODO: Validate session.
+          // TODO: Read state from the database on initial join.
           dbg('Client joined.')
-          ws.session.userId = parsedMsg.userId; /* TODO: Set this */
+          // Store properties on ws.session
+          ws.session.user_id = message.user_id; /* TODO: Set this */
           response = JSON.stringify({ type: 'init', state: initialState });
           ws.send(response);
           break;
-        case "message":
-
-          // Note: we need to filter clients by room
+        case "entry":
           // Push message to the database here
-          // Do we read it back from the database? Caching issues...
-          // For now: try without sync and see if it causes problems
-          // Simultaneously broadcast to clients
-          const responseMsg = JSON.stringify({ type: 'message', response: parsedMsg.message });
-          dbg(`distributing message: ${responseMsg}`)
-          wsserver.clients.forEach(client => {
-            client.send(responseMsg);
-            dbg("ws.session: " + ws.session);
-          })
+          // Do we read it back from the database? Yes.
+          // TODO: Create message_id in database
+          // TODO: send Message objects with unique ID values.
+          const entryMessage = JSON.stringify({ type: 'entry', entry: {text: message.entry, entry_id: null }});
+          dbg(`distributing message: ${entryMessage}`)
+          // Broadcast to all users
+          // TODO: filter clients by room
+          wsserver.clients.forEach(client => { client.send(entryMessage); })
           break;
         case "setUsername":
           // Allow changing username
+          dbg('Set username request: ', message);
           break;
         default:
-          return dbg('Unknown message: ', parsedMsg);
+          return dbg('Unknown message: ', message);
       }
     }
     catch (err) {
-      console.log(`ERROR: ${JSON.stringify(err)}. Unable to handle message: `, parsedMsg);
+      console.log(`ERROR: ${JSON.stringify(err)}. Unable to handle message: `, message);
     }
   })
 
