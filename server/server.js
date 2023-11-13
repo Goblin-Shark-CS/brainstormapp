@@ -155,8 +155,17 @@ wsserver.on('connection', (ws) => {
 
           //send user all information about room by putting it in the state
           const entries = await sqlFunctions.getEntries(ws.session.room_id);
+          // add userVote property to each vote
           const room = await sqlFunctions.getRoom(ws.session.room_id);
           entries.forEach((entry) => (entry.userVote = false));
+          // add voteCount property to each vote
+          for (let i = 0; i < entries.length; i++) {
+            entries[i].voteCount = await sqlFunctions.getVoteCount(
+              entries[i]._id
+            );
+            console.log('VOTE COUNTS:', entries[i].voteCount);
+          }
+
           const state = {
             user_id: ws.session.user_id,
             room,
@@ -174,15 +183,15 @@ wsserver.on('connection', (ws) => {
           // Do we read it back from the database? Yes.
           // TODO: Create entry_id in database
           // TODO: send Message objects with unique ID values.
-          let entry_id;
+          let _id;
           await sqlFunctions
             .addEntry(message.entry, ws.session.room_id, ws.session.user_id)
             .then((entry) => {
-              entry_id = entry._id;
+              _id = entry._id;
             });
           const entryMessage = JSON.stringify({
             type: 'entry',
-            entry: { text: message.entry, entry_id },
+            entry: { text: message.entry, _id },
           });
           dbg(`distributing message: ${entryMessage}`);
           // Broadcast to all users
@@ -194,6 +203,23 @@ wsserver.on('connection', (ws) => {
         case 'setUsername':
           // Allow changing username
           dbg('Set username request: ', message);
+          break;
+        case 'vote':
+          //update database
+          // message.add is true if should add vote. false if should delete
+          if (message.add) {
+            sqlFunctions.addVote(message.entry, ws.session.user_id);
+          } else {
+            sqlFunctions.deleteVote(message.entry, ws.session.user_id);
+          }
+          //sends to all clients new value
+          const vote = JSON.stringify({
+            type: 'vote',
+            entry: { _id: message.entry, add: message.add },
+          });
+          wsserver.clients.forEach((client) => {
+            client.send(vote);
+          });
           break;
         default:
           return dbg('Unknown message: ', message);

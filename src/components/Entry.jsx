@@ -37,7 +37,14 @@ function Entry(props) {
   return (
     <Box
       margin="20"
-      onClick={() => dispatch(toggleVote(props.entry))}
+      onClick={() => {
+        dispatch({
+          type: "WEBSOCKET_SEND",
+          payload: { type: "vote", add: !props.userVote, entry: props.entry },
+        });
+        console.log("PROPS.ENTRY:", props.entry);
+        dispatch(toggleVote(props.entry));
+      }}
       style={{ cursor: "pointer", userSelect: "none" }}
     >
       <Paper>
