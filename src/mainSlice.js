@@ -9,13 +9,15 @@ export const mainSlice = createSlice({
   },
   reducers: {
     addEntry: (state, action) => {
-      const { entry_id, message } = action.payload;
+      // const { entry_id, message } = action.payload; 
+      const { message } = action.payload; // [AFS] Removed entry_id; will not have this when we send message
       state.entries.push({
-        id: entry_id,
+        id: null, // TODO: [AFS] need to calculate this
         voteCount: 0,
         userVote: false,
         message: message
       });
+      console.log(action.payload);
     },
     toggleVote: (state, action) => {
       // Get entry clicked
