@@ -9,7 +9,7 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
-    publicPath: '/view/',
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
   },
   target: 'web',
