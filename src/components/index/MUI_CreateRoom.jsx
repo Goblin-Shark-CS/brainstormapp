@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-export default function Login() {
+export default function CreateRoom() {
   return (
     <Box
       display="flex"
