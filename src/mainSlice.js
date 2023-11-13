@@ -17,10 +17,9 @@ export const mainSlice = createSlice({
         text
       });
     },
-    toggleVote: (state, action) => {
+    toggleVote: (state, action) => {      
       // Get entry clicked
-      const entry_id = action.payload;
-      const entry = state.entries.find(entry => entry.entry_id === Number(entry_id));
+      const entry = state.entries.find(entry => entry.id === Number(action.payload));
       // Toggle userVote and voteCount for that entry
       if (!entry.userVote) {
         entry.voteCount++;
