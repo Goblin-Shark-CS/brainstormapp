@@ -3,8 +3,11 @@ import { createSlice } from '@reduxjs/toolkit';
 export const mainSlice = createSlice({
   name: 'main',
   initialState: {
-    user_id: null,
-    room: {},      // {room_id, roomname}
+    user_id: "",
+    room: {
+      room_id: "",
+      roomname: ""
+    },
     entries: []    // [{entry_id, voteCount, userVote, message}, ...]
   },
   reducers: {
@@ -17,7 +20,7 @@ export const mainSlice = createSlice({
         text
       });
     },
-    toggleVote: (state, action) => {      
+    toggleVote: (state, action) => {
       // Get entry clicked
       const entry = state.entries.find(entry => entry.id === Number(action.payload));
       // Toggle userVote and voteCount for that entry
