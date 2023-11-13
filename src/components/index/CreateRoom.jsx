@@ -5,11 +5,11 @@ export default function CreateRoom() {
     <div className="center-window flex-center">
       <div className="container-login flex-center">
         <div className="wrap-login">
-          <div>Brainstorm!</div>
-          <div>[Logo]</div>
+          <div className = "main-name" > IdeaStation </div>
+          <div classnName = "logo"><img src='/assets/brainstorming.png' alt="IdeaStation"  height = {'25%'}/> </div>
           <div>
-            <form action="start">
-              <button>Create New Brainstorm!</button>
+            <form action="app.html">
+              <button className="button">Create Room </button>
             </form>
           </div>
         </div>
