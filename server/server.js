@@ -14,6 +14,7 @@ const { PRODUCTION, PORT } = require('./config.js');
 const { errMsg, dbg } = require('./logging.js');
 
 const roomController = require('./controllers/room/roomController.js');
+const sessionController = require('./controllers/user/sessionController.js');
 
 /**
  * API Routes
@@ -121,7 +122,6 @@ const initialState = {
 // Websocket server
 
 const { WebSocketServer } = require('ws');
-const sessionController = require('./controllers/user/sessionController.js');
 const wsserver = new WebSocketServer({ port: 443 });
 
 wsserver.on('connection', (ws) => {
