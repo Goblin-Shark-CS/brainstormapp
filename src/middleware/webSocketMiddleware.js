@@ -1,3 +1,4 @@
+import sqlFunctions from '../../server/sqlFunctions';
 import { setInitialState, addEntry, toggleVote } from '../mainSlice';
 
 export default function webSocketMiddleware(wsUrl) {
@@ -34,7 +35,10 @@ export default function webSocketMiddleware(wsUrl) {
         console.log('New entry: ', message.entry);
         store.dispatch(addEntry(message.entry));
         break;
-
+      case 'vote':
+        console.log('New vote');
+        //dispatch an action that changes number
+        store.dispatch(toggleVote(message.entry));
       default:
         return console.log('Unknown message type: ', message.type);
     }

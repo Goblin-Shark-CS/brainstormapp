@@ -31,6 +31,16 @@ export const mainSlice = createSlice({
         entry.userVote = false;
       }
     },
+    incrementVote: (state, action) => {
+      const entry = state.entries.find(
+        (entry) => entry.id === Number(action.payload.entry_id)
+      );
+      if (action.payload.add) {
+        entry.voteCount++;
+      } else {
+        entry.voteCount--;
+      }
+    },
     changeRoomName: (state, action) => {
       state.room.roomname = action.payload;
     },

@@ -22,12 +22,10 @@ const sqlFunctions = require('./sqlFunctions.js');
  */
 
 // Creates a new room then redirects client to the room.
-app.use('/start',
-  roomController.createRoom,
-  (req, res) => {
-    dbg('Creating room: ', res.locals.roomId);
-    // redirect user to newly created room
-    res.redirect(`/join/${res.locals.roomId}`);
+app.use('/start', roomController.createRoom, (req, res) => {
+  dbg('Creating room: ', res.locals.roomId);
+  // redirect user to newly created room
+  res.redirect(`/join/${res.locals.roomId}`);
 });
 
 // Creates a new user, stores the user_id in the client's cookies, then shows main app
@@ -186,6 +184,24 @@ wsserver.on('connection', (ws) => {
         case 'setUsername':
           // Allow changing username
           dbg('Set username request: ', message);
+          break;
+        case 'vote':
+          //update database
+          // message.add is true if should add vote. false if should delete
+          if (message.add) {
+            sqlFunctions.addVote(message.entry, ws.session.user_id);
+          } else {
+            sqlFunctions.deleteVote(message.entry, ws.session.user_id);
+          }
+          //sends to all clients new value
+          const vote = JSON.stringify({
+            type: 'vote',
+            entry_id: message.entry,
+            add: message.add,
+          });
+          wsserver.clients.forEach((client) => {
+            client.send(vote);
+          });
           break;
         default:
           return dbg('Unknown message: ', message);
