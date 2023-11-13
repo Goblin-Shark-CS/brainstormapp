@@ -44,15 +44,14 @@ export default function webSocketMiddleware(wsUrl) {
     switch (action.type) {
       case 'WEBSOCKET_CONNECT':
         console.log('RUN WEBSOCKET_CONNECT');
-        if (socket !== null) {
-          socket.close();
-        }
+          if (socket === null) {
 
-        // Create a new WebSocket connection
-        socket = new WebSocket(wsUrl);
-        socket.onopen = onOpen(store);
-        socket.onclose = onClose(store);
-        socket.onmessage = onMessage(store);
+          // Create a new WebSocket connection
+          socket = new WebSocket(wsUrl);
+          socket.onopen = onOpen(store);
+          socket.onclose = onClose(store);
+          socket.onmessage = onMessage(store);
+        }
         break;
       case 'WEBSOCKET_DISCONNECT':
         if (socket !== null) {
