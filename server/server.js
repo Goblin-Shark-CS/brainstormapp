@@ -14,40 +14,30 @@ const { PRODUCTION, PORT } = require('./config.js');
 
 const { errMsg, dbg } = require('./logging.js');
 
+const roomController = require('./controllers/room/roomController.js');
+const sessionController = require('./controllers/user/sessionController.js');
+const sqlFunctions = require('./sqlFunctions.js');
+
 /**
  * API Routes
  */
 
-
+// Creates a new room then redirects client to the room.
 app.use('/start',
-  // Create room
-  // Set cookie
-  // Validate
+  roomController.createRoom,
   (req, res) => {
     dbg('Creating room: ', res.locals.roomId);
-    res.sendStatus(200)
-  })
+    // redirect user to newly created room
+    res.redirect(`/join/${res.locals.roomId}`);
+});
 
-
-app.use(
-  '/join/:roomId',
-  /* Match room ID */
-  /* Create session cookie */
-  (req, res) => {
-    dbg('Request to join room: ', req.params.roomId);
-    res.redirect(`/view/${req.params.roomId}`)
-  }
-)
-
-app.use(
-  '/view/:roomId',
-  /* Validate session cookie */
-  /* Send page */
-  (req, res) => {
-    dbg('Sending page: ', req.params.roomId);
-  })
-
-
+// Creates a new user, stores the user_id in the client's cookies, then shows main app
+app.use('/join/:roomId', sessionController.createUser, (req, res) => {
+  dbg('Request to join room: ', req.params.roomId);
+  res.cookie('user_id', res.locals.user_id);
+  res.cookie('room_id', req.params.roomId);
+  res.status(200).sendFile(path.join(__dirname, '../dist/app.html'));
+});
 
 /**
  * Static Pages
@@ -58,28 +48,24 @@ app.use('/bundle.js', (req, res) => {
 
 app.get('/', (req, res) => {
   dbg('Request to main page.');
-  return res.status(200).sendFile(path.join(__dirname, '../public/index.html'));
+  return res.status(200).sendFile(path.join(__dirname, '../dist/index.html'));
 });
-
 
 app.get('/index.html', (req, res) => {
   return res.redirect('/');
 });
 
-
 app.get('/style.css', (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, '../src/style.css'));
 });
-
 
 /**
  * 404 handler
  */
 app.use('*', (req, res) => {
-  dbg("Unknown request: ", req.path);
+  dbg('Unknown request: ', req.path);
   res.status(404).send('Not Found');
 });
-
 
 /**
  * Global error handler
@@ -88,7 +74,7 @@ app.use('*', (req, res) => {
 const defaultErr = {
   log: 'Express error handler caught unknown middleware error',
   status: 500,
-  message: { err: 'An error occurred' }
+  message: { err: 'An error occurred' },
 };
 
 function errorHandler(err, req, res, next) {
@@ -98,102 +84,128 @@ function errorHandler(err, req, res, next) {
 }
 app.use(errorHandler);
 
+app.listen(PORT, () => {
+  dbg(`Listening on port ${PORT}...`);
+});
 
-app.listen(PORT, () => { dbg(`Listening on port ${PORT}...`); });
-
-
-
-
+// initialState: {
+//   user_id: null,
+//   room: {},      // {room_id, roomname}
+//   entries: []    // [{entry_id, voteCount, userVote, message}, ...]
+// },
 
 const initialState = {
-  session: {},
+  user_id: null,
+  room_id: null,
   entries: [
     {
       id: 0,
       text: 'The first brainstorm idea (From Server)',
       voteCount: 0,
-      userVote: null
+      userVote: false,
     },
     {
       id: 1,
       text: 'The second brainstorm idea (From Server)',
       voteCount: 0,
-      userVote: null
+      userVote: false,
     },
     {
       id: 2,
       text: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       voteCount: 0,
-      userVote: null
-    }
-  ]
-}
-
-
+      userVote: false,
+    },
+  ],
+};
 
 // Websocket server
 
-const { WebSocketServer } = require('ws')
-const wsserver = new WebSocketServer({ port: 443 })
+const { WebSocketServer } = require('ws');
+const wsserver = new WebSocketServer({ port: 443 });
 
-wsserver.on('connection', ws => {
+wsserver.on('connection', (ws) => {
   // Try saving a cookie or session key to the ws object?
   // Initialize events for new client
-  dbg('New client connected!')
-  ws.session = {secret: "Secret Info Here"};
+  dbg('New client connected!');
+  ws.session = { secret: 'Secret Info Here' };
 
+  ws.on('close', () => dbg('Client has disconnected!'));
 
-  ws.on('close', () => dbg('Client has disconnected!'))
-
-  ws.on('message', rawMessage => {
+  ws.on('message', async (rawMessage) => {
     let message;
     try {
       message = JSON.parse(rawMessage);
-    }
-    catch (err) {
-      return dbg('Could not parse message: ', rawMessage)
+    } catch (err) {
+      return dbg('Could not parse message: ', rawMessage);
     }
     // Route data
     // TODO: Error handling
     let response;
     try {
       switch (message.type) {
-        case "join":
+        case 'join':
           // NOTE: Initial handshake is done in Express. Session must exist at this point.
           // TODO: Validate session.
           // TODO: Read state from the database on initial join.
-          dbg('Client joined.')
+          dbg('Client joined.');
           // Store properties on ws.session
           ws.session.user_id = message.user_id; /* TODO: Set this */
-          response = JSON.stringify({ type: 'init', state: initialState });
+          ws.session.room_id = message.room_id;
+
+          //send user all information about room by putting it in the state
+          const entries = await sqlFunctions.getEntries(ws.session.room_id);
+          entries.forEach((entry) => (entry.userVote = false));
+          const state = {
+            user_id: ws.session.user_id,
+            room: { room_id: ws.session.room_id, room_name: null },
+            entries,
+          };
+
+          const response = JSON.stringify({
+            type: 'init',
+            state,
+          });
           ws.send(response);
           break;
-        case "entry":
+        case 'entry':
           // Push message to the database here
           // Do we read it back from the database? Yes.
           // TODO: Create entry_id in database
           // TODO: send Message objects with unique ID values.
-          const entryMessage = JSON.stringify({ type: 'entry', entry: {text: message.entry, entry_id: null }});
-          dbg(`distributing message: ${entryMessage}`)
+          let entry_id;
+          await sqlFunctions
+            .addEntry(message.entry, ws.session.room_id, ws.session.user_id)
+            .then((entry) => {
+              entry_id = entry._id;
+            });
+          const entryMessage = JSON.stringify({
+            type: 'entry',
+            entry: { text: message.entry, entry_id },
+          });
+          dbg(`distributing message: ${entryMessage}`);
           // Broadcast to all users
           // TODO: filter clients by room
-          wsserver.clients.forEach(client => { client.send(entryMessage); })
+          wsserver.clients.forEach((client) => {
+            client.send(entryMessage);
+          });
           break;
-        case "setUsername":
+        case 'setUsername':
           // Allow changing username
           dbg('Set username request: ', message);
           break;
         default:
           return dbg('Unknown message: ', message);
       }
+    } catch (err) {
+      console.log(
+        `ERROR: ${JSON.stringify(err)}. Unable to handle message: `,
+        message
+      );
     }
-    catch (err) {
-      console.log(`ERROR: ${JSON.stringify(err)}. Unable to handle message: `, message);
-    }
-  })
-
+  });
 
   ws.onerror = function () {
-    dbg('websocket error')
-  }
-})
+    dbg('websocket error');
+  };
+});
