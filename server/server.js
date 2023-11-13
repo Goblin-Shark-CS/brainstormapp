@@ -22,22 +22,19 @@ const sqlFunctions = require('./sqlFunctions.js');
  */
 
 // Creates a new room then redirects client to the room.
-app.use('/start', roomController.createRoom, (req, res) => {
-  dbg('Creating room: ', res.locals.roomId);
-  // redirect user to newly created room
-  res.redirect(`/join/${res.locals.roomId}`);
+app.use('/start',
+  roomController.createRoom,
+  (req, res) => {
+    dbg('Creating room: ', res.locals.roomId);
+    // redirect user to newly created room
+    res.redirect(`/join/${res.locals.roomId}`);
 });
 
-// Creates a new user, stores the user_id in the client's cookies, then redirects to view
+// Creates a new user, stores the user_id in the client's cookies, then shows main app
 app.use('/join/:roomId', sessionController.createUser, (req, res) => {
   dbg('Request to join room: ', req.params.roomId);
   res.cookie('user_id', res.locals.user_id);
   res.cookie('room_id', req.params.roomId);
-  res.redirect(`/view/${req.params.roomId}`);
-});
-
-app.use('/view/:roomId', (req, res) => {
-  dbg('Sending page: ', req.params.roomId);
   res.status(200).sendFile(path.join(__dirname, '../dist/app.html'));
 });
 
