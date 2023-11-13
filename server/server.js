@@ -202,8 +202,7 @@ wsserver.on('connection', (ws) => {
           //sends to all clients new value
           const vote = JSON.stringify({
             type: 'vote',
-            entry_id: message.entry,
-            add: message.add,
+            entry: { entry_id: message.entry, add: message.add },
           });
           wsserver.clients.forEach((client) => {
             client.send(vote);

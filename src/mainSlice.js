@@ -19,15 +19,16 @@ export const mainSlice = createSlice({
     },
     toggleVote: (state, action) => {
       // Get entry clicked
+      console.log('ACTION', action);
+      console.log('PAYLOAD', action.payload);
       const entry = state.entries.find(
         (entry) => entry.id === Number(action.payload)
       );
+      console.log('ENTRY:', entry);
       // Toggle userVote and voteCount for that entry
       if (!entry.userVote) {
-        entry.voteCount++;
         entry.userVote = true;
       } else {
-        entry.voteCount--;
         entry.userVote = false;
       }
     },
@@ -63,6 +64,7 @@ export const mainSlice = createSlice({
 export const {
   addEntry,
   toggleVote,
+  incrementVote,
   changeRoomName,
   setInitialState,
   loadChat,

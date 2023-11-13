@@ -1,5 +1,9 @@
-import sqlFunctions from '../../server/sqlFunctions';
-import { setInitialState, addEntry, toggleVote } from '../mainSlice';
+import {
+  setInitialState,
+  addEntry,
+  incrementVote,
+  toggleVote,
+} from '../mainSlice';
 
 export default function webSocketMiddleware(wsUrl) {
   let socket = null;
@@ -38,7 +42,7 @@ export default function webSocketMiddleware(wsUrl) {
       case 'vote':
         console.log('New vote');
         //dispatch an action that changes number
-        store.dispatch(toggleVote(message.entry));
+        store.dispatch(incrementVote(message.entry));
       default:
         return console.log('Unknown message type: ', message.type);
     }

@@ -41,6 +41,7 @@ function Entry(props) {
           type: 'WEBSOCKET_SEND',
           payload: { type: 'vote', add: !props.userVote, entry: props.entry },
         });
+        console.log('PROPS.ENTRY:', props.entry);
         dispatch(toggleVote(props.entry));
       }}
       style={{ cursor: 'pointer', userSelect: 'none' }}
