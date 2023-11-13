@@ -3,10 +3,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     mode: process.env.NODE_ENV,
-    entry: "./src/index.js",
+    entry: {
+      app: './src/index.js', // First entry point
+      login: './src/createRoom.js'      // Second entry point
+    },
     output: {
-        path: path.resolve(__dirname, "./dist"),
-        filename: "index_bundle.js"
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist'),
     },
     target: 'web',
     devServer: {
@@ -39,7 +42,14 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'public', 'app.html')
+          filename: 'app.html',
+          template: path.join(__dirname, 'public', 'app.html'),
+          chunks: ['app'] // Includes only app code
         }),
+        new HtmlWebpackPlugin({  // Also generate a test.html
+          filename: 'index.html',
+          template: path.join(__dirname, 'public', 'index.html'),
+          chunks: ['login'] // Includes only login React code
+        })
     ]
 }

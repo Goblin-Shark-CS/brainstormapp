@@ -37,5 +37,22 @@ body,html {
   .voteIcon {
     cursor: pointer;
   }
+}
+
+.flex-center {
+  display: flex;
+  flex-direction: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-window {
+  width: 100vw;
+  height: 100vh;
+}
+
+.wrap-login {
+  display: flex;
+  flex-direction: column;
 
 }
