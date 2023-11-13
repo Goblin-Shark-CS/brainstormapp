@@ -5,7 +5,7 @@ module.exports = {
     mode: process.env.NODE_ENV,
     entry: {
       app: './src/index.js', // First entry point
-      login: './src/login.js'      // Second entry point
+      login: './src/createRoom.js'      // Second entry point
     },
     output: {
       filename: '[name].bundle.js',
@@ -42,12 +42,12 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-          filename: 'index.html',
+          filename: 'app.html',
           template: path.join(__dirname, 'public', 'app.html'),
           chunks: ['app'] // Includes only app code
         }),
         new HtmlWebpackPlugin({  // Also generate a test.html
-          filename: 'login.html',
+          filename: 'index.html',
           template: path.join(__dirname, 'public', 'index.html'),
           chunks: ['login'] // Includes only login React code
         })
