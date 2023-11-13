@@ -15,7 +15,11 @@ sqlFunctions.addRoom = async (roomname = null, password = null) => {
   let attempt = 0;
 
   while (attempt < 5 && !newRoom) {
-    const randomRoomId = generate({ exactly: 1, wordsPerString: 2, separator: '-' });
+    const randomRoomId = generate({
+      exactly: 1,
+      wordsPerString: 2,
+      separator: '-',
+    });
     const _id = randomRoomId[0];
     roomname = randomRoomId[0];
     password = password;
@@ -227,7 +231,7 @@ sqlFunctions.getVoteCount = async (entryId) => {
     `
     )
     .then((data) => {
-      count = data.rows[0];
+      count = data.rows[0].count;
       console.log('The number of votes for the entry:', count);
     })
     .catch((err) =>
@@ -237,7 +241,7 @@ sqlFunctions.getVoteCount = async (entryId) => {
 };
 
 // // test getVoteCount
-// sqlFunctions.getVoteCount(1).then((data) => console.log('RETURNED:', data));
+sqlFunctions.getVoteCount(1).then((data) => console.log('RETURNED:', data));
 // sqlFunctions.getVoteCount(2).then((data) => console.log('RETURNED:', data));
 // sqlFunctions.getVoteCount(3).then((data) => console.log('RETURNED:', data));
 
@@ -287,7 +291,7 @@ sqlFunctions.deleteRoom = async (room_id) => {
 //   .deleteRoom('cuddlyphone')
 //   .then((room) => console.log('RETURNED:', room));
 
-//Note: this function will give an error if deleting an entry with a comment. Will need to refactor to delete associated comments first. 
+//Note: this function will give an error if deleting an entry with a comment. Will need to refactor to delete associated comments first.
 sqlFunctions.deleteEntry = async (entry_id) => {
   let entry;
   await pool
