@@ -17,12 +17,14 @@ export const mainSlice = createSlice({
         id: entry_id,
         voteCount: 0,
         userVote: false,
-        text
+        text,
       });
     },
     toggleVote: (state, action) => {
       // Get entry clicked
-      const entry = state.entries.find(entry => entry.id === Number(action.payload));
+      const entry = state.entries.find(
+        (entry) => entry.id === Number(action.payload)
+      );
       // Toggle userVote and voteCount for that entry
       if (!entry.userVote) {
         entry.voteCount++;
@@ -46,12 +48,18 @@ export const mainSlice = createSlice({
       // NOTE: This is dangerous; it would be better to validate data from the backend.
       console.log('Loading initial state.');
       return action.payload;
-    }
+    },
   },
 });
 
 // Export actions for use in components
-export const { addEntry, toggleVote, changeRoomName, setInitialState, loadChat } = mainSlice.actions;
+export const {
+  addEntry,
+  toggleVote,
+  changeRoomName,
+  setInitialState,
+  loadChat,
+} = mainSlice.actions;
 
 // Export the reducer function for store configuration
 export default mainSlice.reducer;
