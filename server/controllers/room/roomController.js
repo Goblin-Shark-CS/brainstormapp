@@ -29,4 +29,11 @@ roomController.getUpdates = (req, res, next) => {
   return next();
 };
 
+// [AFS] In Progress
+roomController.changeRoomName = (req, res, next) => {
+  // TODO: need to create a way for users to update the room name
+  // 
+  return next();
+}
+
 module.exports = roomController;

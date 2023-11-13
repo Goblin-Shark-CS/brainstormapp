@@ -16,11 +16,19 @@ import MenuIcon from "@mui/icons-material/Menu";
 export default function App() {
   const dispatch = useDispatch();
   const { room } = useSelector((state) => state.main);
-  // const room_name = room.roomname ? room.roomname : "goblin-shark";
+  const room_name = room.roomname
 
   React.useEffect(() => {
     dispatch({ type: "WEBSOCKET_CONNECT" });
   }, []);
+
+  function editRoomName(e) {
+    console.log(e.target.textContent);
+    let text = e.target.textContent;
+    e.innerHTML = `<textarea id="roonName">${text}</textarea>`
+
+  }
+
 
   return (
     <Box display="flex" height="100vh" flexDirection="column">
@@ -36,9 +44,25 @@ export default function App() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" color="inherit" component="div">
-            Room: {room.roomname}
+          
+          <Typography 
+            variant="h6" 
+            color="inherit" 
+            component="div" 
+            sx = {{ display: 'flex', paddingRight: '5px' }}
+          >
+            <div style = {{ 
+              paddingRight: '7px', 
+              color: '#CCCCCC', 
+            }}>Room:</div>
+            {/* <div onClick={(e) => editRoomName(e)}>{room.roomname}</div> */}
+            <div 
+              contentEditable="true" 
+              onClick={(e) => editRoomName(e)}
+            >{room_name}</div>
+            <div id="roomChangeStatus"></div>
           </Typography>
+
         </Toolbar>
       </AppBar>
 
