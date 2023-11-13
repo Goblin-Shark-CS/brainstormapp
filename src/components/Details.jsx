@@ -78,7 +78,7 @@ export default function Details() {
           <QRCode
             size={256}
             style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            value={"http://192.168.0.240:8080/"} /* concatenate room_id */
+            value={"http://10.0.11.113:8080/"} /* concatenate room_id */
             viewBox={`0 0 256 256`}
           />
         </div>
