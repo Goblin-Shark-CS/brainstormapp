@@ -4,7 +4,7 @@ export default function webSocketMiddleware(wsUrl) {
     let socket = null;
 
     const onOpen = (store) => (event) => {
-        console.log("We are connected")
+        console.log("We are connected");
         socket.send(JSON.stringify({ type: "join" }));
     };
 
