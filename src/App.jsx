@@ -8,10 +8,18 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useDispatch } from "react-redux";
 
 // TO DO: media query to hide details container and expand entries/submit container when width < XXpx
 // TO DO: share button on right of AppBar (invokes iOS/Android share dialogue on mobile, copies to clipboard on desktop)
 export default function App() {
+  const dispatch = useDispatch();
+
+
+  React.useEffect( () => {
+    dispatch({type: 'WEBSOCKET_CONNECT'});
+  })
+
   return (
     <Box display="flex" height="100vh" flexDirection="column">
       <AppBar position="static">
