@@ -23,6 +23,7 @@ export default function App() {
   const dispatch = useDispatch();
   const { room } = useSelector((state) => state.main);
 
+  // This is where the Websocket is created. Run once, at app init.
   React.useEffect(() => {
     dispatch({ type: "WEBSOCKET_CONNECT" });
   }, []);

@@ -5,23 +5,46 @@ import {
   toggleVote,
 } from '../mainSlice';
 
+/**
+ * This middleware is a singleton object for the websocket to live in.
+ *
+ * It is able to intercept actions, as well as provide a store.dispatch() for websocket event handlers.
+ * It might be better to refactor this to make it more type-safe and keep the Websockets API in a single file.
+ * (Currently, we have to construct WEBSOCKET_SEND actions in a few different places.)
+ *
+ * https://wanago.io/2021/12/20/redux-middleware-websockets/
+ * https://www.taniarascia.com/websockets-in-redux/
+ *
+ *  */
+
+
+
 export default function webSocketMiddleware(wsUrl) {
   let socket = null;
 
   const onOpen = (store) => (event) => {
-    console.log('We are connected');
+    // This callback is triggered by the socket. It notifies us that we are now able to send messages.
+    console.log('We are connected!');
+    // Read the user_id and room_id from cookies. These should exist by the time we have launched index.js.
     const cookies = Object.fromEntries(
       document.cookie.split('; ').map((c) => c.split('='))
     );
     const { user_id, room_id } = cookies;
-    // in server route can send a second param with userid
-    // also send user_id //in server the join case sends intial state, make sure it has right info
+
+    // Identify our Websocket to the server
     socket.send(JSON.stringify({ type: 'join', user_id, room_id }));
   };
 
-  const onClose = (store) => (event) => {};
+  const onClose = (store) => (event) => {/* Unused */};
 
   const onMessage = (store) => (event) => {
+    /**
+     * Main message handler.
+     * First parse the JSON, then handle it.
+     * Getting all the response types correct would be a lot easier with Typescript.
+     * */
+
+    //
     let message;
     console.log('Received Message: ', event);
     try {
