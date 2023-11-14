@@ -45,15 +45,15 @@ When the App component renders, it initiates the websocket connection via a disp
 
 **To better understand how data is flowing, we'll walk through a sample action and its path through the code.**
 
-##### Part 1: Frontend to Backend
+#### Part 1: Frontend to Backend
 
 A user types a message and hits the Post button. This triggers the sendMessage function, which grabs the text from the text field. Then an action is dispatched with the type 'WEBSOCKET_SEND' and a payload carrying the text. As previously stated, all dispatches initially go through the WebSocketMiddleware, so that's our first stop. There we find the switch case that matches the action type ('WEBSOCKET_SEND). Here we call socket.send() attaching the payload. This function sends that payload from the frontend socket portal through to the backend socket portal (similar to sending an HTTP request with a body.)
 
-##### Part 2: Backend
+#### Part 2: Backend
 
 Any payloads sent to the server through the websocket are picked up by ws.on('message', func). (Note that this 'message' has nothing to do with the payload of this particular action being a message. 'message' is a built in eventListener in websocket that is fired anytime a payload comes through the socket.) The payload itself comes in through the parameter we called 'rawMessage', which is then JSON parsed into the variable 'message'. Then we use a switch statement on the type parameter on that message, which in this example is 'entry'. (We call each post submitted post by the user an "entry".) Within that case, the new entry is first saved to the SQL database and the SQL generated id for that new entry is returned. Then we wrap up the entry text and id into another payload and JSON.stringify it to prepare it for its journey back through the websocket. The wsserver object has a property labeled 'clients' which is an array of all clients currently connected. Using a forEach we send the payload out to every connected client with the same method that was used to launch data into the portal from the other direction, .send();
 
-##### Part 3: Backend to Frontend
+#### Part 3: Backend to Frontend
 
 The payload is recieved in the same place it was originally sent off in part 1, webSocketMiddleware. (Except that this payload was initiated by just one client, but is now being recieved by all clients.) Recieved messages enter the onMessage function where they are routed by type in the switch block. The type we are dealing with right now is 'entry', so we enter that case, which sends a dispatch directly to the store with the action addEntry. Finally we enter the reducers in mainSlice.js where the entry is added to the state and rendered on the client's app.
 
