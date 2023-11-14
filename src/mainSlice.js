@@ -13,6 +13,8 @@ export const mainSlice = createSlice({
   reducers: {
     addEntry: (state, action) => {
       const { _id, text } = action.payload;
+      // It might be nice to replace this with entry_id instead of _id straight from the SQL server.
+      // Modify the SQL query perhaps?
       state.entries.push({
         _id: _id,
         voteCount: 0,
@@ -21,6 +23,7 @@ export const mainSlice = createSlice({
       });
     },
     toggleVote: (state, action) => {
+      // Triggered when "toggle vote" is clicked.
       const entry = state.entries.find(
         (entry) => entry._id === Number(action.payload)
       );
@@ -49,6 +52,13 @@ export const mainSlice = createSlice({
       state.user_id = user_id;
       state.room = room;
       state.entries = entries;
+    },
+    loadChat: (state, action) => {
+      // **DANGER DANGER DANGER!!!!***
+      // Here we take the state pulled from the server and completely replace state.
+      // It would be better to validate data from the backend here.
+      console.log('Loading initial state.');
+      return action.payload;
     },
   },
 });

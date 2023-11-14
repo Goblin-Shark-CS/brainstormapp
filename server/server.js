@@ -12,6 +12,7 @@ app.use('/assets', express.static('src/assets'))
 
 const { PRODUCTION, PORT } = require('./config.js');
 
+// dbg() is console.log
 const { errMsg, dbg } = require('./logging.js');
 
 const roomController = require('./controllers/room/roomController.js');
@@ -19,7 +20,14 @@ const sessionController = require('./controllers/user/sessionController.js');
 const sqlFunctions = require('./sqlFunctions.js');
 
 /**
- * API Routes
+ * Initializing the Websocket connection is done as follows.
+ *
+ * To create a new room the user sends an Express HTTP request to to /start. The server will respond with a room name.
+ * The user is forwarded to the Express route /join/room-name, which creates a cookie with their user_id.
+ * Finally, the user sends a Websocket 'join' message to the server with their user_id.
+ * The server sends with an 'init' message containing the room state.
+ *
+ * Other users can send a request to /join/room-name and just get their own ID. This is what we use for the QR code.
  */
 
 // Creates a new room then redirects client to the room.
@@ -88,46 +96,33 @@ app.listen(PORT, () => {
   dbg(`Listening on port ${PORT}...`);
 });
 
-// initialState: {
-//   user_id: null,
-//   room: {},      // {room_id, roomname}
-//   entries: []    // [{entry_id, voteCount, userVote, message}, ...]
-// },
 
-const initialState = {
-  user_id: null,
-  room_id: null,
-  entries: [
-    {
-      id: 0,
-      text: 'The first brainstorm idea (From Server)',
-      voteCount: 0,
-      userVote: false,
-    },
-    {
-      id: 1,
-      text: 'The second brainstorm idea (From Server)',
-      voteCount: 0,
-      userVote: false,
-    },
-    {
-      id: 2,
-      text: 'The third brainstorm idea (From Server). Long: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      voteCount: 0,
-      userVote: false,
-    },
-  ],
-};
-
-// Websocket server
+/**
+ * Websocket server
+ *
+ * Here we launch a Websocket server in parallel with the Express server. This server works slightly differently than HTTP.
+ * Instead of sending Requests and receiving Responses, either the server or the client can send a Message to the other at any time.
+ *
+ * The raw message can be in any format. By convention, both the client and server send JSON objects.
+ * To handle "routing", we look at the property `message.type`. We have 'join', 'entry', 'vote', and so on.
+ *
+ * One of the toughest parts of this is carefully matching the property names between the front and the back end.
+ * Another part is following the data flow. Since there's no fetch().then().then() interaction chain, the back and forth is a bit scattered.
+ *
+ * The steps for 'init' are described above.
+ *
+ *  */
 
 const { WebSocketServer } = require('ws');
 const wsserver = new WebSocketServer({ port: 443 });
 
 wsserver.on('connection', (ws) => {
-  // Try saving a cookie or session key to the ws object?
-  // Initialize events for new client
+
+  // The ws object will be created for each client.
+  // This object is persistent and we can store properties on it, like user_id and room_id.
+  // Those properties will also be available when we iterate using wsserver.clients.forEach()
   dbg('New client connected!');
+
   ws.session = { secret: 'Secret Info Here' };
 
   ws.on('close', () => dbg('Client has disconnected!'));
@@ -139,26 +134,23 @@ wsserver.on('connection', (ws) => {
     } catch (err) {
       return dbg('Could not parse message: ', rawMessage);
     }
-    // Route data
     // TODO: Error handling
     let response;
     try {
       switch (message.type) {
         case 'join':
-          // NOTE: Initial handshake is done in Express. Session must exist at this point.
-          // TODO: Validate session.
-          // TODO: Read state from the database on initial join.
+          // NOTE: Initial handshake is done in Express. user_id must exist at this point.
           dbg('Client joined.');
           // Store properties on ws.session
-          ws.session.user_id = message.user_id; /* TODO: Set this */
+          ws.session.user_id = message.user_id;
           ws.session.room_id = message.room_id;
 
-          //send user all information about room by putting it in the state
+          //send user all information about room by putting it in the state.
           const entries = await sqlFunctions.getEntries(ws.session.room_id);
-          // add userVote property to each vote
+          // add userVote property to each vote.
           const room = await sqlFunctions.getRoom(ws.session.room_id);
           entries.forEach((entry) => (entry.userVote = false));
-          // add voteCount property to each vote
+          // add voteCount property to each vote.
           for (let i = 0; i < entries.length; i++) {
             entries[i].voteCount = await sqlFunctions.getVoteCount(
               entries[i]._id
@@ -179,7 +171,7 @@ wsserver.on('connection', (ws) => {
           ws.send(response);
           break;
         case 'entry':
-          // Push message to the database here
+          // We have received a message from the client.
           // Do we read it back from the database? Yes.
           // TODO: Create entry_id in database
           // TODO: send Message objects with unique ID values.
@@ -202,10 +194,12 @@ wsserver.on('connection', (ws) => {
           break;
         case 'setUsername':
           // Allow changing username
+          /* NOT IMPLEMENTED */
           dbg('Set username request: ', message);
           break;
         case 'vote':
-          //update database
+          // Add vote.
+          // Consistency is enforced on database side by uniqueness.
           // message.add is true if should add vote. false if should delete
           if (message.add) {
             sqlFunctions.addVote(message.entry, ws.session.user_id);
@@ -232,7 +226,7 @@ wsserver.on('connection', (ws) => {
     }
   });
 
-  ws.onerror = function () {
-    dbg('websocket error');
+  ws.onerror = function (err) {
+    dbg('WEBSOCKET ERROR: ', err);
   };
 });
