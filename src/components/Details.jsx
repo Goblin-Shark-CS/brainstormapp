@@ -1,20 +1,13 @@
 import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { reducer1, reducer2, reducer3 } from "../mainSlice";
-import { Button, Snackbar } from "@mui/material";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import { Snackbar, Box, TextField, Typography } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import QRCode from "react-qr-code";
-import Typography from "@mui/material/Typography";
 
 export default function Details() {
   const dispatch = useDispatch();
-  const { room } = useSelector((state) => state.main);
-  const roomId = room ? room.room_id : "";
 
-  // const url = "http://10.0.11.113:8080/join/" + roomId;
   const url = window.location.toString();
 
   const CopyToClipboardButton = () => {

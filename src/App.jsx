@@ -3,20 +3,25 @@ import { useSelector, useDispatch } from "react-redux";
 import Entries from "./components/Entries.jsx";
 import Submit from "./components/Submit.jsx";
 import Details from "./components/Details.jsx";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-// import useMediaQuery from '@mui/material/useMediaQuery'
-// import { positions } from '@mui/system';
 
-// TO DO: share button on right of AppBar (invokes iOS/Android share dialogue on mobile, copies to clipboard on desktop)
+// TO DO: share button on right of AppBar (invokes iOS/Android share dialogue)
 export default function App() {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   const dispatch = useDispatch();
   const { room } = useSelector((state) => state.main);
-  // const room_name = room.roomname ? room.roomname : "goblin-shark";
 
   React.useEffect(() => {
     dispatch({ type: "WEBSOCKET_CONNECT" });
@@ -25,17 +30,35 @@ export default function App() {
   return (
     <Box display="flex" height={window.innerHeight} flexDirection="column">
       <AppBar position="absolute">
-        {" "}
-        {/** Changed from static to absolute */}
         <Toolbar variant="dense">
           <IconButton
             edge="start"
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={() => setIsOpen(true)}
           >
             <MenuIcon />
           </IconButton>
+
+          {/* Swappable Drawer */}
+          <Drawer
+            anchor="left"
+            size="sm"
+            open={isOpen}
+            onClose={() => setIsOpen(false)}
+          >
+            <List>
+              <ListItem
+                button
+                component="a"
+                href={"http://" + window.location.hostname + ":8080/start"}
+              >
+                <ListItemText primary="New Room" />
+              </ListItem>
+            </List>
+          </Drawer>
+
           <Typography variant="h6" color="inherit" component="div">
             Room: {room.roomname}
           </Typography>
@@ -70,7 +93,6 @@ export default function App() {
             marginTop="50px"
             paddingBottom="50px"
             sx={{
-              // other styles you might want to add
               maskImage:
                 "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
             }}
