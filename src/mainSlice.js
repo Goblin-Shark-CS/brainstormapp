@@ -8,7 +8,7 @@ export const mainSlice = createSlice({
       room_id: "",
       roomname: ""
     },
-    entries: []    // [{entry_id, voteCount, userVote, message}, ...]
+    entries: []    // [{_id, voteCount, userVote, text}, ...]
   },
   reducers: {
     addEntry: (state, action) => {
@@ -21,13 +21,9 @@ export const mainSlice = createSlice({
       });
     },
     toggleVote: (state, action) => {
-      // Get entry clicked
-      console.log('ACTION', action);
-      console.log('PAYLOAD', action.payload);
       const entry = state.entries.find(
         (entry) => entry._id === Number(action.payload)
       );
-      console.log('ENTRY:', entry);
       // Toggle userVote and voteCount for that entry
       if (!entry.userVote) {
         entry.userVote = true;
@@ -54,12 +50,6 @@ export const mainSlice = createSlice({
       state.room = room;
       state.entries = entries;
     },
-    loadChat: (state, action) => {
-      // Completely replace state.
-      // NOTE: This is dangerous; it would be better to validate data from the backend.
-      console.log('Loading initial state.');
-      return action.payload;
-    },
   },
 });
 
@@ -70,7 +60,6 @@ export const {
   incrementVote,
   changeRoomName,
   setInitialState,
-  loadChat,
 } = mainSlice.actions;
 
 // Export the reducer function for store configuration
