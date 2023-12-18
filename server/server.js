@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
-app.use('/assets', express.static('src/assets'))
+app.use('/assets', express.static('src/assets'));
 
 const { PRODUCTION, PORT } = require('./config.js');
 
@@ -31,13 +31,11 @@ const sqlFunctions = require('./sqlFunctions.js');
  */
 
 // Creates a new room then redirects client to the room.
-app.use('/start',
-  roomController.createRoom,
-  (req, res) => {
-    dbg('Creating room: ', res.locals.roomId);
-    // redirect user to newly created room
-    res.redirect(`/join/${res.locals.roomId}`);
-  });
+app.use('/start', roomController.createRoom, (req, res) => {
+  dbg('Creating room: ', res.locals.roomId);
+  // redirect user to newly created room
+  res.redirect(`/join/${res.locals.roomId}`);
+});
 
 // Creates a new user, stores the user_id in the client's cookies, then shows main app
 app.use('/join/:roomId', sessionController.createUser, (req, res) => {
@@ -52,6 +50,20 @@ app.use('/join/:roomId', sessionController.createUser, (req, res) => {
  */
 app.use('/bundle.js', (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, '../index_bundle.js'));
+});
+
+app.use('/login.bundle.js', (req, res) => {
+  console.log(__dirname);
+  return res
+    .status(200)
+    .sendFile(path.join(__dirname, '../dist/login.bundle.js'));
+});
+
+app.use('/app.bundle.js', (req, res) => {
+  console.log(__dirname);
+  return res
+    .status(200)
+    .sendFile(path.join(__dirname, '../dist/app.bundle.js'));
 });
 
 app.get('/', (req, res) => {
@@ -96,7 +108,6 @@ app.listen(PORT, () => {
   dbg(`Listening on port ${PORT}...`);
 });
 
-
 /**
  * Websocket server
  *
@@ -117,7 +128,6 @@ const { WebSocketServer } = require('ws');
 const wsserver = new WebSocketServer({ port: 443 });
 
 wsserver.on('connection', (ws) => {
-
   // The ws object will be created for each client.
   // This object is persistent and we can store properties on it, like user_id and room_id.
   // Those properties will also be available when we iterate using wsserver.clients.forEach()
