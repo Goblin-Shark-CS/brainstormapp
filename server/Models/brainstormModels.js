@@ -108,7 +108,7 @@ const createTables = async () => {
   );
 };
 
-// createTables();
+createTables();
 
 module.exports = {
   query: (text, params, callback) => {
